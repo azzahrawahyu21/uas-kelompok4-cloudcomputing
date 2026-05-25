@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Encryption App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <section class="container md:mx-auto">
+        <section
+            class="relative w-full h-auto md:h-screen px-6 py-10 md:py-0 bg-[url('/static/images/background.jpg')] bg-cover bg-center bg-fixed">
+            <div class="absolute inset-0 bg-black/50"></div>
+
+            <div class="relative z-10 flex flex-col items-center justify-center h-full text-white space-y-6">
+
+                <img src="/static/images/logo.png" alt="Logo"
+                    class="w-32 h-32 opacity-0 translate-y-10 transition-all duration-1000 ease-out" id="hero-logo">
+
+                <h1 class="text-7xl font-bold text-center">Welcome to Our Website!</h1>
+                <p class="text-2xl text-center max-w-3xl">
+                    Website ini menyediakan layanan enkripsi dan dekripsi pesan menggunakan 4 metode Cipher.
+                </p>
+
+                <p class="text-lg italic text-gray-200 text-center">
+                    Lindungi pesanmu dengan <span class="font-semibold">Enkripsi</span>,
+                    dan ungkap rahasia dengan <span class="font-semibold">Dekripsi</span>.
+                </p>
+
+                <div class="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
+                    <a href="#apk"
+                        class="px-10 py-3 text-white font-semibold rounded-full shadow-lg transition bg-white/30 backdrop-blur-sm hover:bg-white/40 text-center">
+                        Mulai Sekarang!
+                        </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-blue-900 text-white p-8 shadow-lg">
+            <div class="mx-2 md:mx-10 mt-4">
+                <h1 class="text-4xl text-center font-bold mb-8">Members Of The Group <i
+                        class="ri-team-fill text-4xl "></i></h1>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                    <div class="bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-6 text-center text-white hover:scale-105 transition"
+                        data-aos="fade-up" data-aos-delay="100">
+                        <h2 class="text-xl font-bold">Amindita Maestri</h2>
+                        <p class="text-sm">233307002</p>
+                    </div>
+
+                    <div class="bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-6 text-center text-white hover:scale-105 transition"
+                        data-aos="fade-up" data-aos-delay="200">
+                        <h2 class="text-xl font-bold">Ergi Zenila Marta S.</h2>
+                        <p class="text-sm">233307010</p>
+                    </div>
+
+                    <div class="bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-6 text-center text-white hover:scale-105 transition"
+                        data-aos="fade-up" data-aos-delay="300">
+                        <h2 class="text-xl font-bold">Fernanda Adityo S.</h2>
+                        <p class="text-sm">233307012</p>
+                    </div>
+
+                    <div class="bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-6 text-center text-white hover:scale-105 transition"
+                        data-aos="fade-up" data-aos-delay="400">
+                        <h2 class="text-xl font-bold">Haikal Azzrial Akbar</h2>
+                        <p class="text-sm">233307014</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="bg-slate-100 text-gray-900 py-16">
+            <div class="max-w-6xl mx-auto px-6">
+                <h1 class="text-4xl text-center font-bold mb-12">
+                    Metode Yang Digunakan
+                </h1>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h2 class="text-2xl font-bold mb-2">Caesar Cipher</h2>
+                        <p class="text-gray-700 text-justify ">
+                            Caesar Cipher adalah metode enkripsi klasik yang menggantikan setiap huruf dengan huruf lain
+                            yang berjarak tertentu dalam alfabet. Sederhana, tetapi mudah dipecahkan.
+                        </p>
+                        <a href="https://drive.google.com/file/d/1f8wzU4bjSruozWkn4crixPYj10K7v8eY/view?usp=sharing"
+                            target="_blank"
+                            class="inline-block mt-4 px-4 py-2 bg-blue-900 hover:bg-blue-800 text-white rounded-lg shadow-md text-center transition hover:scale-105">
+                            Lihat Jurnal <i class="ri-external-link-line ml-1"></i>
+                        </a>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-lg p-6 ">
+                        <h2 class="text-2xl font-bold mb-2">Vigenère Cipher</h2>
+                        <p class="text-gray-700 text-justify">
+                            Vigenère Cipher menggunakan kata kunci untuk melakukan enkripsi dengan metode substitusi
+                            bergeser. Lebih kuat dibanding Caesar karena pola pergeserannya bervariasi.
+                        </p>
+                        <a href="https://drive.google.com/file/d/18UVDubHndX7ycbm8KFrJyl-zA4FaB77M/view?usp=drive_link"
+                            target="_blank"
+                            class="inline-block mt-4 px-4 py-2 bg-blue-900 hover:bg-blue-800 text-white rounded-lg shadow-md text-center transition hover:scale-105">
+                            Lihat Jurnal <i class="ri-external-link-line ml-1"></i>
+                        </a>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-lg p-6 ">
+                        <h2 class="text-2xl font-bold mb-2">Stream Cipher</h2>
+                        <p class="text-gray-700 text-justify">
+                            Stream Cipher adalah metode enkripsi yang mengenkripsi data bit per bit secara real-time.
+                            Algoritma ini menghasilkan keystream (aliran kunci semu acak) dari kunci rahasia, lalu
+                            menggabungkannya dengan plaintext menggunakan operasi XOR untuk menghasilkan ciphertext.
+                            Keunggulan utamanya adalah kecepatan dan efisiensi, sehingga cocok untuk aplikasi yang
+                            membutuhkan enkripsi data streaming, seperti komunikasi suara dan video.
+                        </p>
+                        <a href="https://drive.google.com/file/d/14uiC2I-WIpy9sB08nrs8sl8oV5x2jRKC/view?usp=sharing"
+                            target="_blank"
+                            class="inline-block mt-4 px-4 py-2 bg-blue-900 hover:bg-blue-800 text-white rounded-lg shadow-md text-center transition hover:scale-105">
+                            Lihat Jurnal <i class="ri-external-link-line ml-1"></i>
+                        </a>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-lg p-6 ">
+                        <h2 class="text-2xl font-bold mb-2">AES</h2>
+                        <p class="text-gray-700 text-justify ">
+                            AES Cipher (Advanced Encryption Standard) adalah algoritma kriptografi simetris yang
+                            digunakan untuk mengamankan data dengan cara mengubah (enkripsi) data asli (plaintext)
+                            menjadi bentuk kode acak (ciphertext) menggunakan kunci rahasia (secret key), dan bisa
+                            dikembalikan lagi ke bentuk semula (dekripsi) dengan kunci yang sama.
+                        </p>
+                        <a href="https://drive.google.com/file/d/1QOd4qOxcVFtPDUS5x_2vYNK1E7VHcyfg/view?usp=drive_link"
+                            target="_blank"
+                            class="inline-block mt-4 px-4 py-2 bg-blue-900 hover:bg-blue-800 text-white rounded-lg shadow-md text-center transition hover:scale-105">
+                            Lihat Jurnal <i class="ri-external-link-line ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="bg-gradient-to-r from-blue-50 to-blue-100 py-16 px-6 md:px-20">
+            <div class="max-w-5xl mx-auto text-center">
+                <h2 class="text-4xl font-bold text-gray-800 mb-6">
+                    Mengapa Perlu Enkripsi dan Dekripsi?
+                </h2>
+                <p class="text-lg text-gray-700 leading-relaxed mb-10">
+                    Dalam era digital saat ini, data menjadi aset yang sangat berharga.
+                    Enkripsi dan dekripsi digunakan untuk menjaga kerahasiaan, integritas,
+                    serta keamanan informasi dari akses yang tidak sah.
+                    Dengan enkripsi, pesan dapat terlindungi selama proses penyimpanan maupun pengiriman,
+                    sedangkan dekripsi memungkinkan penerima yang sah untuk memahami isi pesan tersebut.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-white rounded-xl shadow-md p-6 hover:scale-105 transition">
+                        <i class="ri-shield-keyhole-fill text-4xl text-blue-900 p-3 rounded-full bg-slate-200"></i>
+                        <h3 class="text-xl font-semibold my-3">Kerahasiaan</h3>
+                        <p class="text-gray-600 text-sm">
+                            Hanya pihak yang berwenang yang dapat membaca data.
+                        </p>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-md p-6 hover:scale-105 transition">
+                        <i class="ri-file-shield-2-fill text-4xl text-blue-900 p-3 rounded-full bg-slate-200"></i>
+                        <h3 class="text-xl font-semibold my-3">Integritas</h3>
+                        <p class="text-gray-600 text-sm">
+                            Menjamin data tidak berubah selama pengiriman.
+                        </p>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-md p-6 hover:scale-105 transition">
+                        <i class="ri-user-shared-fill text-4xl text-blue-900 p-3 rounded-full bg-slate-200"></i>
+                        <h3 class="text-xl font-semibold my-3">Otentikasi</h3>
+                        <p class="text-gray-600 text-sm">
+                            Memastikan identitas pengirim data dapat diverifikasi.
+                        </p>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-md p-6 hover:scale-105 transition">
+                        <i class="ri-safe-2-fill text-4xl text-blue-900 p-3 rounded-full bg-slate-200"></i>
+                        <h3 class="text-xl font-semibold my-3">Keamanan Data</h3>
+                        <p class="text-gray-600 text-sm">
+                            Melindungi data dari pencurian atau penyalahgunaan.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="bg-white">
+            <div class="mx-auto py-10 pb-20 p-6 text-center">
+                <h2 class="text-4xl font-bold text-gray-800 mb-6">
+                    Alur Penggunaan
+                </h2>
+                <p class="text-gray-600 mb-6 text-lg mx-4 md:mx-32">
+                    Untuk mempermudah Anda dalam menggunakan aplikasi ini, berikut adalah langkah-langkah yang perlu
+                    dilakukan mulai dari memasukkan teks, memilih metode enkripsi atau dekripsi, hingga menyimpan
+                    hasilnya. Ikuti alur berikut agar proses berjalan dengan lancar.
+                </p>
+
+                <div class="pt-6 flex flex-col md:flex-row md:flex-wrap justify-center items-center gap-4 md:gap-8">
+                    <div class="flex flex-col items-center">
+                        <div
+                            class="w-12 h-12 flex items-center justify-center bg-blue-900 hover:bg-blue-800 text-white font-bold rounded-full shadow-lg transition text-xl">
+                            1
+                        </div>
+                        <p class="mt-2 text-gray-700 font-medium">Input Teks</p>
+                    </div>
+                    <i class="ri-arrow-down-line text-2xl text-gray-400 block md:hidden"></i>
+                    <i class="ri-arrow-right-line text-2xl text-gray-400 hidden md:block"></i>
+
+                    <div class="flex flex-col items-center">
+                        <div
+                            class="w-12 h-12 flex items-center justify-center bg-blue-900 hover:bg-blue-800 text-white font-bold rounded-full shadow-lg transition text-xl">
+                            2
+                        </div>
+                        <p class="mt-2 text-gray-700 font-medium">Input Key</p>
+                    </div>
+                    <i class="ri-arrow-down-line text-2xl text-gray-400 block md:hidden"></i>
+                    <i class="ri-arrow-right-line text-2xl text-gray-400 hidden md:block"></i>
+
+                    <div class="flex flex-col items-center">
+                        <div
+                            class="w-12 h-12 flex items-center justify-center bg-blue-900 hover:bg-blue-800 text-white font-bold rounded-full shadow-lg transition text-xl">
+                            3
+                        </div>
+                        <p class="mt-2 text-gray-700 font-medium">Pilih Metode</p>
+                    </div>
+                    <i class="ri-arrow-down-line text-2xl text-gray-400 block md:hidden"></i>
+                    <i class="ri-arrow-right-line text-2xl text-gray-400 hidden md:block"></i>
+
+                    <div class="flex flex-col items-center">
+                        <div
+                            class="w-12 h-12 flex items-center justify-center bg-blue-900 hover:bg-blue-800 text-white font-bold rounded-full shadow-lg transition text-xl">
+                            4
+                        </div>
+                        <p class="mt-2 text-gray-700 font-medium">Proses</p>
+                    </div>
+                    <i class="ri-arrow-down-line text-2xl text-gray-400 block md:hidden"></i>
+                    <i class="ri-arrow-right-line text-2xl text-gray-400 hidden md:block"></i>
+
+                    <div class="flex flex-col items-center">
+                        <div
+                            class="w-12 h-12 flex items-center justify-center bg-blue-900 hover:bg-blue-800 text-white font-bold rounded-full shadow-lg transition text-xl">
+                            5
+                        </div>
+                        <p class="mt-2 text-gray-700 font-medium">Lihat Hasil</p>
+                    </div>
+                    <i class="ri-arrow-down-line text-2xl text-gray-400 block md:hidden"></i>
+                    <i class="ri-arrow-right-line text-2xl text-gray-400 hidden md:block"></i>
+
+                    <div class="flex flex-col items-center">
+                        <div
+                            class="w-12 h-12 flex items-center justify-center bg-blue-900 hover:bg-blue-800 text-white font-bold rounded-full shadow-lg transition text-xl">
+                            6
+                        </div>
+                        <p class="mt-2 text-gray-700 font-medium">Selesai</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+        <section id="apk"
+    class="bg-white text-black pb-14 pt-12 px-6 md:px-14">
+    <div class="text-center mx-auto max-w-3xl">
+        <p
+            class="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold rounded-full bg-slate-200 text-slate-700 border border-slate-300">
+            <i class="ri-lock-2-line"></i> Real-time Encryption Lab
+        </p>
+        <h1 class="text-4xl md:text-5xl font-extrabold mt-4 leading-tight">
+            Aplikasi Enkripsi & Dekripsi Pesan
+        </h1>
+        <p class="text-base md:text-lg text-slate-700 mt-3">
+            Pilih metode kriptografi, lakukan <span class="font-semibold">enkripsi</span> untuk mengamankan
+            teks,
+            atau <span class="font-semibold">dekripsi</span> untuk membuka kembali pesan rahasia.
+        </p>
+    </div>
+    <div class="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="flex">
+            <div class="w-full bg-slate-50 border border-slate-300 backdrop-blur-xl rounded-2xl shadow-2xl p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-blue-300/40"
+                data-aos="fade-right">
+                <div class="flex items-center justify-between mb-2">
+                    <h2 class="text-2xl font-bold text-slate-800">Enkripsi Pesan</h2>
+                    <span
+                        class="text-xs px-3 py-1 rounded-full bg-emerald-400/10 text-emerald-700 border border-emerald-300/20">Secure</span>
+                </div>
+
+                <form id="encryptForm" class="space-y-4">
+                    <div>
+                        <label class="block font-medium mb-2 text-slate-700">Teks</label>
+                        <input type="text" id="encryptText" name="text" required
+                            class="w-full px-3 py-3 rounded-xl border border-slate-300 bg-white text-black placeholder-slate-400 focus:ring-2 focus:ring-indigo-400 focus:outline-none text-sm transition">
+                    </div>
+
+                    <div>
+                        <label class="block font-medium mb-2 text-slate-700">Key</label>
+                        <input type="text" id="encryptKey" name="key"
+                            class="w-full px-3 py-3 rounded-xl border border-slate-300 bg-white text-black placeholder-slate-400 focus:ring-2 focus:ring-indigo-400 focus:outline-none text-sm transition" required>
+                    </div>
+
+                    <div>
+                        <label class="block font-medium mb-2 text-slate-700">Metode Enkripsi</label>
+                        <select id="encryptMethod" name="method" required
+                            class="w-full px-3 py-3 rounded-xl border border-blue-300 bg-slate-100 text-slate-800 focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm transition">
+                            <option value="">Pilih</option>
+                            <option value="caesar">Caesar</option>
+                            <option value="vigenere">Vigenere</option>
+                            <option value="stream">Stream</option>
+                            <option value="aes">AES</option>
+                            <option value="all">Kombinasi (Semua Cipher)</option>
+                        </select>
+                    </div>
+
+                    <div id="encryptShiftContainer" class="hidden">
+                        <label class="block mb-2 text-sm font-medium text-slate-700">Shift</label>
+                        <input id="encryptShift" type="number" name="shift" readonly
+                            class="w-full border border-slate-300 rounded-xl px-3 py-2 bg-slate-100 text-slate-800" />
+                    </div>
+
+                    <input type="hidden" name="action" value="encrypt">
+
+                    <button type="submit"
+                        class="w-full py-3 bg-blue-800 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-lg transition transform hover:-translate-y-0.5 hover:shadow-blue-900/40 text-sm">
+                        Proses Enkripsi
+                    </button>
+                    </form>
+
+                <div id="encryptResult" class="mt-6 p-4 bg-slate-100 border border-slate-300 rounded-xl hidden">
+                    <div class="flex items-center justify-between">
+                        <p id="encryptResultText" class="text-slate-800 break-words text-sm md:text-base"></p>
+                        <button id="copyEncryptBtn"
+                            class="flex items-center gap-1 px-3 py-1 text-xs bg-blue-500 hover:bg-blue-400 text-white rounded-md transition">
+                            Copy
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex">
+            <div class="w-full bg-slate-50 border border-slate-300 backdrop-blur-xl rounded-2xl shadow-2xl p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-indigo-300/40"
+                data-aos="fade-left">
+                <div class="flex items-center justify-between mb-2">
+                    <h2 class="text-2xl font-bold text-slate-800">Dekripsi Pesan</h2>
+                    <span
+                        class="text-xs px-3 py-1 rounded-full bg-indigo-400/10 text-indigo-700 border border-indigo-300/20">Decode</span>
+                </div>
+
+                <form id="decryptForm" class="space-y-4">
+                    <div>
+                        <label class="block font-medium mb-2 text-slate-700">Teks</label>
+                        <input type="text" id="decryptText" name="text" required
+                            class="w-full px-3 py-3 rounded-xl border border-slate-300 bg-white text-black placeholder-slate-400 focus:ring-2 focus:ring-indigo-400 focus:outline-none text-sm transition">
+                    </div>
+
+                    <div>
+                        <label class="block font-medium mb-2 text-slate-700">Key</label>
+                        <input type="text" id="decryptKey" name="key"
+                            class="w-full px-3 py-3 rounded-xl border border-slate-300 bg-white text-black placeholder-slate-400 focus:ring-2 focus:ring-indigo-400 focus:outline-none text-sm transition" required>
+                    </div>
+
+                    <div>
+                        <label class="block font-medium mb-2 text-slate-700">Metode Dekripsi</label>
+                        <select id="decryptMethod" name="method" required
+                            class="w-full px-3 py-3 rounded-xl border border-emerald-300 bg-slate-100 text-slate-800 focus:ring-2 focus:ring-emerald-400 focus:outline-none text-sm transition">
+                            <option value="">Pilih</option>
+                            <option value="caesar">Caesar</option>
+                            <option value="vigenere">Vigenere</option>
+                            <option value="stream">Stream</option>
+                            <option value="aes">AES</option>
+                            <option value="all">Kombinasi (Semua Cipher)</option>
+                        </select>
+                    </div>
+
+                    <div id="decryptShiftContainer" class="hidden">
+                        <label class="block mb-2 text-sm font-medium text-slate-700">Shift</label>
+                        <input id="decryptShift" type="number" name="shift" readonly
+                            class="w-full border border-slate-300 rounded-xl px-3 py-2 bg-slate-100 text-slate-800" />
+                    </div>
+
+                    <input type="hidden" name="action" value="decrypt">
+
+                    <button type="submit"
+                        class="w-full py-3 bg-blue-800 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-lg transition transform hover:-translate-y-0.5 hover:shadow-blue-900/40 text-sm">
+                        Proses Dekripsi
+                    </button>
+                    </form>
+
+                <div id="decryptResult" class="mt-6 p-4 bg-slate-100 border border-slate-300 rounded-xl hidden">
+                    <div class="flex items-center justify-between">
+                        <p id="decryptResultText" class="text-slate-800 break-words text-sm md:text-base"></p>
+                        <button id="copyDecryptBtn"
+                            class="flex items-center gap-1 px-3 py-1 text-xs bg-blue-500 hover:bg-blue-400 text-white rounded-md transition">
+                            Copy
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+        <section class="bg-blue-900 text-white p-4">
+            <footer class="text-center text-white text-sm my-4">
+                &copy; 2025 Group 2 (5A) - Information Technology. All rights reserved.
+            </footer>
+        </section>
+    </section>
+
+    <script>
+        // Animasi hanya untuk logo
+        document.addEventListener("scroll", () => {
+            const logo = document.getElementById("hero-logo");
+            const rect = logo.getBoundingClientRect();
+            if (rect.top < window.innerHeight - 100) {
+                logo.classList.remove("opacity-0", "translate-y-10");
+                logo.classList.add("opacity-100", "translate-y-0");
+            }
+        });
+    </script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000, // durasi animasi
+            once: true // animasi hanya sekali
+        });
+    </script>
+    <script>
+        function hitungShiftDariKey(key) {
+            return key ? key.length : 0;
+        }
+
+        function updateShiftUI(prefix) {
+            const method = document.getElementById(prefix + 'Method').value;
+            const keyInput = document.getElementById(prefix + 'Key');
+            const container = document.getElementById(prefix + 'ShiftContainer');
+            const field = document.getElementById(prefix + 'Shift');
+
+            // 1. LOGIKA UNTUK CAESAR CIPHER TUNGGAL
+            if (method === 'caesar') {
+                field.value = hitungShiftDariKey(keyInput.value);
+                container.classList.remove('hidden');
+                keyInput.placeholder = 'Masukkan key (huruf atau angka) untuk Caesar';
+            } else {
+                field.value = '';
+                container.classList.add('hidden');
+            }
+
+            // 2. LOGIKA UNTUK KEY REQUIRED DAN PLACEHOLDER
+            if (method === 'aes') {
+                keyInput.required = true;
+                keyInput.placeholder = 'Masukkan AES key (diulang/dipotong ke 16 byte)';
+            } else if (method === 'vigenere' || method === 'stream') {
+                keyInput.required = true;
+                keyInput.placeholder = `Masukkan key untuk ${method}`;
+            } else if (method === 'all') { // Menggunakan 'all' untuk kombinasi
+                keyInput.required = true;
+                keyInput.placeholder = 'Key ini akan digunakan untuk semua 4 cipher kombinasi';
+            } else if (method === '') {
+                // Pilih
+                keyInput.required = false;
+                keyInput.placeholder = '';
+            } else {
+                // Default: Key utama menjadi required jika ada metode yang dipilih
+                keyInput.required = true; 
+                keyInput.placeholder = 'Masukkan Key';
+            }
+        }
+
+        // Event listener untuk KEY INPUT utama (agar shift Caesar terupdate real-time)
+        ['encrypt', 'decrypt'].forEach(prefix => {
+            const keyInput = document.getElementById(prefix + 'Key');
+            keyInput.addEventListener('input', () => {
+                const method = document.getElementById(prefix + 'Method').value;
+                if (method === 'caesar') {
+                    document.getElementById(prefix + 'Shift').value = hitungShiftDariKey(keyInput.value);
+                }
+            });
+
+            // Event listener untuk METHOD CHANGE
+            document.getElementById(prefix + 'Method').addEventListener('change', () => updateShiftUI(prefix));
+
+            // Inisialisasi awal
+            updateShiftUI(prefix);
+        });
+
+        // Handle proses enkripsi dan dekripsi
+        async function handleFormSubmit(formId, resultId, textId) {
+            const form = document.getElementById(formId);
+            form.addEventListener('submit', async e => {
+                e.preventDefault();
+                const formData = new FormData(form);
+                const method = formData.get('method');
+                const action = formData.get('action');
+                const mainKey = formData.get('key') || '';
+                
+                // Ketika method adalah 'all' (Kombinasi), kita langsung kirim key tunggal
+                // karena backend Anda ('app.py') mengharapkan 'key' tunggal untuk method 'all'.
+
+                const response = await fetch('/process', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                document.getElementById(resultId).classList.remove('hidden');
+                
+                const resultTextElement = document.getElementById(textId);
+
+                // Jika enkripsi kombinasi berhasil, backend mengembalikan "message" yang berisi key.
+                if (method === 'all' && action === 'encrypt' && data.result) {
+                    // Tampilkan hasil enkripsi (result) diikuti dengan message (catatan key)
+                    let outputText = data.result + "\n\n=== CATATAN PENTING UNTUK DEKRIPSI ===\n";
+                    outputText += "Untuk dekripsi, gunakan Key yang sama di input Key utama form Dekripsi.\n";
+                    outputText += "Key Utama yang digunakan: " + mainKey;
+                    
+                    resultTextElement.innerText = outputText;
+                    
+                    // Isi otomatis ke form dekripsi
+                    document.getElementById('decryptKey').value = mainKey;
+                    document.getElementById('decryptMethod').value = 'all';
+                    updateShiftUI('decrypt'); // Perbarui tampilan dekripsi
+                }
+                // Logika lain (Dekripsi Kombinasi, Cipher Tunggal)
+                else {
+                    resultTextElement.innerText = data.result || data.message || 'Terjadi kesalahan!';
+                }
+            });
+        }
+
+        handleFormSubmit('encryptForm', 'encryptResult', 'encryptResultText');
+        handleFormSubmit('decryptForm', 'decryptResult', 'decryptResultText');
+
+        // Copy tombol
+        function copyToClipboard(btnId, textId) {
+            const btn = document.getElementById(btnId);
+            const text = document.getElementById(textId);
+
+            btn.addEventListener('click', () => {
+                // Hanya salin hasil enkripsi/dekripsi (bagian pertama teks)
+                const contentToCopy = text.innerText.split('\n\n===')[0].trim(); 
+                
+                navigator.clipboard.writeText(contentToCopy).then(() => {
+                    btn.innerHTML = " Disalin";
+                    setTimeout(() => {
+                        btn.innerHTML = " Copy";
+                    }, 2000);
+                });
+            });
+        }
+
+        copyToClipboard('copyEncryptBtn', 'encryptResultText');
+        copyToClipboard('copyDecryptBtn', 'decryptResultText');
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,29 @@
+body {
+  background-color: #f8f9fa;
+  color: #333;
+}
+
+.user-card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+/* ====== Styling untuk judul halaman user ====== */
+.page-title {
+  font-size: 20px; 
+  color: #0D4715;        
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 3rem;
+}
+
+.judul-line {
+  width: 140px;                
+  height: 4px;                 
+  background-color: #EA762B;   
+  border: none;                
+  margin: 0 auto auto auto;    
+  border-radius: 10px;          
+  opacity: 1 !important;
+}
