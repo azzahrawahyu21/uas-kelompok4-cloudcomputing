@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CarX Street — Race Event Manager</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter+Tight:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --neon: #3b82f6;
+    --neon2: #60a5fa;
+    --dark: #080c14;
+    --card: #0d1424;
+    --card2: #111d30;
+    --border: #1e3a5f;
+    --text: #e2e8f0;
+    --muted: #64748b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Inter Tight', sans-serif;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 20% 0%, rgba(59,130,246,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 100%, rgba(59,130,246,0.05) 0%, transparent 60%);
+  }
+  .font-orb { font-family: 'Inter Tight', sans-serif; font-weight: 700; }
+  .mono { font-family: 'Inter Tight', sans-serif; font-weight: 700; }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--dark); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .neon-border { border: 1px solid rgba(59,130,246,0.4); box-shadow: 0 0 12px rgba(59,130,246,0.1); }
+  .neon-border-active { border: 1px solid rgba(59,130,246,0.8); box-shadow: 0 0 20px rgba(59,130,246,0.3); }
+
+  .tab-active { background: var(--neon); color: #fff; font-weight: 700; }
+
+  .timer-big {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: clamp(1.2rem, 3vw, 2rem);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .timer-running { color: #4ade80; text-shadow: 0 0 10px rgba(74,222,128,0.5); }
+  .timer-stopped { color: var(--neon); }
+  .timer-dnf { color: #ef4444; }
+  .timer-dns { color: #6b7280; }
+  .timer-dsq { color: #f97316; }
+
+  .badge-dnf { background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
+  .badge-dns { background: rgba(107,114,128,0.15); color: #9ca3af; border: 1px solid rgba(107,114,128,0.3); }
+  .badge-dsq { background: rgba(249,115,22,0.15); color: #fdba74; border: 1px solid rgba(249,115,22,0.3); }
+  .badge-ok { background: rgba(74,222,128,0.1); color: #86efac; border: 1px solid rgba(74,222,128,0.2); }
+  .badge-running { background: rgba(74,222,128,0.2); color: #4ade80; border: 1px solid rgba(74,222,128,0.5); animation: pulse-green 1s infinite; }
+  .badge-finish { background: rgba(59,130,246,0.15); color: #93c5fd; border: 1px solid rgba(59,130,246,0.4); }
+
+  @keyframes pulse-green {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(74,222,128,0.3); }
+    50% { box-shadow: 0 0 0 4px rgba(74,222,128,0.0); }
+  }
+
+  .pos-1 { color: #fbbf24; }
+  .pos-2 { color: #94a3b8; }
+  .pos-3 { color: #c2824a; }
+
+  /* Gap badge */
+  .gap-badge {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    letter-spacing: 0.03em;
+  }
+  .gap-leader { background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+  .gap-normal { background: rgba(239,68,68,0.1); color: #fca5a5; border: 1px solid rgba(239,68,68,0.25); }
+
+  input[type="text"], input[type="number"], select {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 14px;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  input[type="text"]:focus, input[type="number"]:focus, select:focus { outline: none; border-color: var(--neon); }
+  select option { background: #0d1424; }
+
+  .btn { border-radius: 6px; padding: 7px 14px; font-family: 'Inter Tight'; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.15s; letter-spacing: 0.03em; border: none; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary { background: var(--neon); color: #fff; }
+  .btn-primary:hover { background: var(--neon2); }
+  .btn-danger { background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid rgba(239,68,68,0.4); }
+  .btn-danger:hover { background: rgba(239,68,68,0.3); }
+  .btn-ghost { background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border); }
+  .btn-ghost:hover { background: rgba(255,255,255,0.1); }
+  .btn-success { background: rgba(74,222,128,0.15); color: #86efac; border: 1px solid rgba(74,222,128,0.4); }
+  .btn-success:hover { background: rgba(74,222,128,0.3); }
+  .btn-warn { background: rgba(251,191,36,0.15); color: #fde68a; border: 1px solid rgba(251,191,36,0.4); }
+  .btn-warn:hover { background: rgba(251,191,36,0.3); }
+  .btn-stop { background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.5); }
+  .btn-stop:hover { background: rgba(239,68,68,0.4); }
+  .btn-dsq { background: rgba(249,115,22,0.15); color: #fdba74; border: 1px solid rgba(249,115,22,0.4); }
+  .btn-dsq:hover { background: rgba(249,115,22,0.3); }
+  .btn-start-race { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #fff; font-size: 16px; padding: 12px 32px; letter-spacing: 0.1em; }
+
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
+  .modal-box { background: var(--card2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; width: min(480px, 95vw); max-height: 90vh; overflow-y: auto; }
+
+  table { width: 100%; border-collapse: collapse; }
+  th { font-family: 'Inter Tight'; font-size: 10px; letter-spacing: 0.1em; color: var(--muted); padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border); }
+  td { padding: 10px; border-bottom: 1px solid rgba(42,42,58,0.5); font-size: 14px; vertical-align: middle; }
+  tr:hover td { background: rgba(59,130,246,0.04); }
+
+  .stripe-odd { background: rgba(255,255,255,0.01); }
+
+  .pos-circle {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Inter Tight'; font-weight: 700; font-size: 12px;
+  }
+
+  @keyframes tick { 0%,49%{opacity:1} 50%,100%{opacity:0.5} }
+  .ticking { animation: tick 0.5s infinite; }
+
+  #raceCountdownOverlay { position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:200;display:flex;align-items:center;justify-content:center; }
+  .countdown-num { font-family:'Inter Tight';font-size:min(20vw,160px);font-weight:900;color:var(--neon);text-shadow:0 0 60px rgba(59,130,246,0.8); }
+  @keyframes countPop { 0%{transform:scale(1.5);opacity:0} 30%{opacity:1;transform:scale(1)} 80%{transform:scale(1);opacity:1} 100%{transform:scale(0.8);opacity:0} }
+  .countdown-num { animation: countPop 0.9s ease forwards; }
+
+  /* Race ended banner */
+  #race-ended-banner {
+    background: linear-gradient(135deg, rgba(74,222,128,0.15), rgba(59,130,246,0.1));
+    border: 1px solid rgba(74,222,128,0.5);
+    border-radius: 10px;
+    padding: 14px 20px;
+    margin-bottom: 16px;
+    display: none;
+    align-items: center;
+    gap: 12px;
+  }
+
+  /* Live gap row highlight */
+  .gap-live { transition: color 0.3s; }
+
+  /* Post-race banner */
+  .post-race-notice {
+    background: rgba(249,115,22,0.08);
+    border: 1px solid rgba(249,115,22,0.3);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: #fdba74;
+    margin-bottom: 12px;
+  }
+
+  /* Finish order badge */
+  .finish-order {
+    font-family: 'Inter Tight';
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 3px;
+    background: rgba(59,130,246,0.15);
+    color: #93c5fd;
+    border: 1px solid rgba(59,130,246,0.3);
+    letter-spacing: 0.05em;
+  }
+
+  /* ===================== RESPONSIVE ===================== */
+
+  /* Desktop nav tabs */
+  #desktop-nav { display: flex; gap: 8px; flex-wrap: wrap; }
+  /* Mobile bottom nav */
+  #mobile-nav { display: none; }
+
+  /* Qualifying grid: stopwatch left, table right */
+  .qual-layout { display: grid; gap: 16px; grid-template-columns: 320px 1fr; }
+
+  /* Participants top grid */
+  .participants-top { display: grid; gap: 16px; grid-template-columns: 1fr 1fr; }
+
+  /* Race day header controls */
+  .raceday-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+  /* Table: hide less critical cols on small screens */
+  .col-hide-sm { }
+
+  @media (max-width: 768px) {
+    /* Hide desktop nav, show mobile bottom bar */
+    #desktop-nav { display: none; }
+    #mobile-nav {
+      display: flex;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      z-index: 60;
+      background: rgba(8,12,20,0.97);
+      border-top: 1px solid rgba(59,130,246,0.2);
+      backdrop-filter: blur(10px);
+      padding: 6px 4px;
+      padding-bottom: calc(6px + env(safe-area-inset-bottom));
+      gap: 2px;
+    }
+    #mobile-nav button {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 7px 4px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      letter-spacing: 0;
+    }
+    #mobile-nav button .nav-icon { font-size: 18px; line-height: 1; }
+    #mobile-nav button.tab-active { background: rgba(59,130,246,0.15); color: var(--neon); }
+
+    /* Padding bottom for fixed nav */
+    .max-w-6xl { padding-bottom: 80px !important; }
+
+    /* Header: compact */
+    .sticky .max-w-6xl { padding-top: 10px !important; padding-bottom: 10px !important; }
+
+    /* Participants layout: stack */
+    .participants-top { grid-template-columns: 1fr; }
+
+    /* Qualifying layout: stack stopwatch above table */
+    .qual-layout { grid-template-columns: 1fr; }
+
+    /* Tab headers: compress */
+    .tab-page-header { flex-direction: column; align-items: flex-start !important; gap: 10px; }
+    .tab-page-header .tab-page-title h2 { font-size: 1rem !important; }
+
+    /* Race day header: stack */
+    .raceday-controls { width: 100%; }
+    .raceday-controls #race-global-timer-display { flex: 1; text-align: center; }
+    .raceday-controls #btn-race-start { flex: 1; font-size: 14px; padding: 10px 12px; }
+
+    /* Timer display: smaller */
+    .timer-big { font-size: clamp(1.4rem, 8vw, 1.8rem) !important; }
+
+    /* Modal: full screen on mobile */
+    .modal-box { border-radius: 16px 16px 0 0 !important; position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; width: 100% !important; max-height: 92vh !important; }
+    .modal-overlay { align-items: flex-end !important; }
+
+    /* Tables: hide some columns */
+    .col-hide-sm { display: none; }
+
+    /* Race ended banner: stack */
+    #race-ended-banner { flex-direction: column; align-items: flex-start; gap: 8px; }
+    #race-ended-banner button { width: 100%; margin-left: 0 !important; }
+
+    /* Podium cards: horizontal scroll */
+    .podium-grid { overflow-x: auto; flex-wrap: nowrap !important; padding-bottom: 8px; }
+    .podium-grid .podium-card { min-width: 150px; }
+
+    /* Stopwatch buttons: row */
+    .qual-btn-row { flex-direction: row !important; }
+    .qual-btn-row .btn { flex: 1; }
+
+    /* Standing table: hide gap col on very small */
+    .col-hide-xs { }
+  }
+
+  @media (max-width: 480px) {
+    .col-hide-xs { display: none; }
+    body { font-size: 13px; }
+    th { font-size: 9px; padding: 6px 6px; }
+    td { padding: 8px 6px; font-size: 13px; }
+    .btn { font-size: 12px; padding: 6px 10px; }
+    .gap-badge { font-size: 10px; }
+  }
+
+  /* Results podium */
+  .podium-card {
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .podium-1 { background: linear-gradient(135deg, rgba(251,191,36,0.15), rgba(251,191,36,0.05)); border: 1px solid rgba(251,191,36,0.4); }
+  .podium-2 { background: linear-gradient(135deg, rgba(148,163,184,0.12), rgba(148,163,184,0.04)); border: 1px solid rgba(148,163,184,0.3); }
+  .podium-3 { background: linear-gradient(135deg, rgba(194,130,74,0.12), rgba(194,130,74,0.04)); border: 1px solid rgba(194,130,74,0.3); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="sticky top-0 z-50" style="background:rgba(10,10,15,0.95);border-bottom:1px solid rgba(59,130,246,0.2);backdrop-filter:blur(8px);">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div style="width:36px;height:36px;background:var(--neon);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+      </div>
+      <div>
+        <div class="font-orb font-bold text-sm" style="color:var(--neon);">CARX STREET</div>
+        <div class="text-xs" style="color:var(--muted);">Race Event Manager</div>
+      </div>
+    </div>
+    <div id="desktop-nav">
+      <button onclick="switchTab('participants')" id="tab-participants" class="btn tab-active">Peserta</button>
+      <button onclick="switchTab('qualifying')" id="tab-qualifying" class="btn btn-ghost">Kualifikasi</button>
+      <button onclick="switchTab('standing')" id="tab-standing" class="btn btn-ghost">Standing</button>
+      <button onclick="switchTab('raceday')" id="tab-raceday" class="btn btn-ghost">Race Day</button>
+      <button onclick="switchTab('results')" id="tab-results" class="btn btn-ghost">Hasil</button>
+    </div>
+  </div>
+</div>
+
+<!-- MOBILE BOTTOM NAV -->
+<div id="mobile-nav">
+  <button onclick="switchTab('participants')" id="mob-tab-participants" class="tab-active">
+    <span class="nav-icon">👥</span>Peserta
+  </button>
+  <button onclick="switchTab('qualifying')" id="mob-tab-qualifying">
+    <span class="nav-icon">⏱</span>Kualif
+  </button>
+  <button onclick="switchTab('standing')" id="mob-tab-standing">
+    <span class="nav-icon">📋</span>Grid
+  </button>
+  <button onclick="switchTab('raceday')" id="mob-tab-raceday">
+    <span class="nav-icon">🏎</span>Race
+  </button>
+  <button onclick="switchTab('results')" id="mob-tab-results">
+    <span class="nav-icon">🏆</span>Hasil
+  </button>
+</div>
+
+<!-- COUNTDOWN OVERLAY -->
+<div id="raceCountdownOverlay" style="display:none;">
+  <div style="text-align:center;">
+    <div id="countdownNum" class="countdown-num">3</div>
+    <div style="font-family:'Inter Tight';color:var(--muted);font-size:14px;margin-top:16px;letter-spacing:0.2em;">RACE STARTING</div>
+  </div>
+</div>
+
+<!-- RACE ENDED OVERLAY -->
+<div id="raceEndedOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:200;display:none;align-items:center;justify-content:center;">
+  <div style="text-align:center;">
+    <div style="font-family:'Inter Tight';font-size:min(10vw,80px);font-weight:900;color:#4ade80;text-shadow:0 0 60px rgba(74,222,128,0.8);animation:countPop 1s ease forwards;">🏁</div>
+    <div style="font-family:'Inter Tight';font-size:min(6vw,40px);font-weight:700;color:#fff;margin-top:12px;letter-spacing:0.15em;">RACE SELESAI!</div>
+    <div style="font-family:'Inter Tight';color:var(--muted);font-size:14px;margin-top:8px;letter-spacing:0.2em;">SEMUA PEMBALAP FINISH</div>
+    <button onclick="closeRaceEnded()" class="btn btn-primary" style="margin-top:24px;font-size:16px;padding:12px 32px;">Lihat Hasil →</button>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div id="editModal" class="modal-overlay" style="display:none;">
+  <div class="modal-box" style="width:min(520px,95vw);">
+    <div class="flex items-center justify-between mb-2">
+      <div>
+        <h3 class="font-bold text-base" style="color:var(--neon);">✎ EDIT WAKTU</h3>
+        <div id="edit-modal-subtitle" class="text-xs mt-1" style="color:var(--muted);"></div>
+      </div>
+      <button onclick="closeEditModal()" class="btn btn-ghost" style="padding:4px 10px;">✕</button>
+    </div>
+    <div id="editModalContent"></div>
+  </div>
+</div>
+
+<!-- PENALTY MODAL -->
+<div id="penaltyModal" class="modal-overlay" style="display:none;">
+  <div class="modal-box">
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="font-orb font-bold text-base" style="color:#fbbf24;">TAMBAH PENALTY</h3>
+      <button onclick="closePenaltyModal()" class="btn btn-ghost" style="padding:4px 10px;">✕</button>
+    </div>
+    <div id="penaltyModalContent"></div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="max-w-6xl mx-auto px-4 py-6">
+
+  <!-- ===================== TAB: PARTICIPANTS ===================== -->
+  <div id="tab-content-participants">
+    <div class="participants-top gap-6">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;">
+        <h2 class="font-orb font-bold text-sm mb-5" style="color:var(--neon);letter-spacing:0.1em;">TAMBAH PESERTA</h2>
+        <div class="flex flex-col gap-3">
+          <div>
+            <label class="block text-xs mb-1" style="color:var(--muted);letter-spacing:0.05em;">NOMOR PESERTA</label>
+            <input type="text" id="inp-num" placeholder="Contoh: 88" />
+          </div>
+          <div>
+            <label class="block text-xs mb-1" style="color:var(--muted);letter-spacing:0.05em;">NAMA PESERTA</label>
+            <input type="text" id="inp-name" placeholder="Nama pembalap" onkeydown="if(event.key==='Enter')addParticipant()" />
+          </div>
+          <button onclick="addParticipant()" class="btn btn-primary mt-1" style="font-size:14px;">+ Tambah Peserta</button>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center;">
+          <div class="font-orb font-bold" style="font-size:3rem;color:var(--neon);" id="stat-total">0</div>
+          <div class="text-sm" style="color:var(--muted);">Total Peserta</div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;">
+          <div class="text-xs mb-2" style="color:var(--muted);letter-spacing:0.05em;">STATUS SESI</div>
+          <div id="session-status" class="font-orb text-sm" style="color:#4ade80;">SIAP KUALIFIKASI</div>
+          <div class="text-xs mt-2" style="color:var(--muted);" id="session-hint">Tambahkan peserta untuk memulai event</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;margin-top:20px;">
+      <div class="flex items-center justify-between px-5 py-4" style="border-bottom:1px solid var(--border);">
+        <h2 class="font-orb font-bold text-sm" style="color:var(--neon);letter-spacing:0.1em;">DAFTAR PESERTA</h2>
+        <button onclick="clearAllParticipants()" class="btn btn-danger" style="font-size:12px;">Hapus Semua</button>
+      </div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead><tr><th>#</th><th>NOMOR</th><th>NAMA</th><th>STATUS</th><th>AKSI</th></tr></thead>
+          <tbody id="participants-table"></tbody>
+        </table>
+        <div id="participants-empty" class="text-center py-12" style="color:var(--muted);display:none;">
+          <div style="font-size:2rem;margin-bottom:8px;">🏁</div>
+          <div>Belum ada peserta ditambahkan</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== TAB: QUALIFYING ===================== -->
+  <div id="tab-content-qualifying" style="display:none;">
+    <div class="flex items-center justify-between mb-5 tab-page-header">
+      <div class="tab-page-title">
+        <h2 class="font-orb font-bold text-lg" style="color:var(--neon);">QUALIFYING SESSION</h2>
+        <p class="text-sm" style="color:var(--muted);">Pilih peserta lalu catat waktu terbaik</p>
+      </div>
+      <button onclick="resetQualifying()" class="btn btn-danger">Reset Kualifikasi</button>
+    </div>
+
+    <div class="qual-layout">
+      <!-- Stopwatch Panel -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;height:fit-content;">
+        <div class="text-xs mb-3" style="color:var(--muted);letter-spacing:0.1em;">PILIH PESERTA</div>
+        <select id="qual-select" style="margin-bottom:16px;">
+          <option value="">-- Pilih Peserta --</option>
+        </select>
+
+        <div style="background:rgba(0,0,0,0.4);border-radius:10px;padding:20px;text-align:center;margin-bottom:16px;">
+          <div id="qual-timer-display" class="timer-big timer-stopped ticking" style="margin-bottom:4px;">00:00.000</div>
+          <div id="qual-current-label" class="text-xs" style="color:var(--muted);">— pilih peserta —</div>
+        </div>
+
+        <div class="flex flex-col gap-2 qual-btn-row">
+          <button onclick="qualStart()" id="btn-qual-start" class="btn btn-success" style="font-size:15px;">▶ START</button>
+          <button onclick="qualStop()" id="btn-qual-stop" class="btn btn-stop" style="font-size:15px;" disabled>■ STOP & SIMPAN</button>
+          <button onclick="qualReset()" class="btn btn-ghost" style="font-size:13px;">↺ Reset Timer</button>
+        </div>
+
+        <div style="border-top:1px solid var(--border);margin-top:16px;padding-top:16px;">
+          <div class="text-xs mb-2" style="color:var(--muted);">INPUT MANUAL (mm:ss.mmm)</div>
+          <div class="flex gap-2">
+            <input type="text" id="qual-manual-time" placeholder="01:23.456" style="flex:1;" />
+            <button onclick="qualManualInput()" class="btn btn-primary">OK</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Qualifying Results Table -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+        <div class="px-5 py-4" style="border-bottom:1px solid var(--border);">
+          <div class="font-orb font-bold text-sm" style="color:var(--neon);">HASIL KUALIFIKASI</div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead><tr>
+              <th>POS</th><th>NO</th><th>NAMA</th><th class="col-hide-sm">WAKTU</th><th class="col-hide-sm">PENALTY</th><th>TOTAL</th><th class="col-hide-xs">GAP</th><th>STATUS</th><th>AKSI</th>
+            </tr></thead>
+            <tbody id="qualifying-table"></tbody>
+          </table>
+          <div id="qualifying-empty" class="text-center py-10" style="color:var(--muted);">
+            <div>Belum ada waktu tercatat</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== TAB: STANDING ===================== -->
+  <div id="tab-content-standing" style="display:none;">
+    <div class="flex items-center justify-between mb-5">
+      <div>
+        <h2 class="font-orb font-bold text-lg" style="color:var(--neon);">QUALIFYING STANDING</h2>
+        <p class="text-sm" style="color:var(--muted);">Urutan grid start untuk Race Day</p>
+      </div>
+    </div>
+    <div id="standing-content"></div>
+  </div>
+
+  <!-- ===================== TAB: RACE DAY ===================== -->
+  <div id="tab-content-raceday" style="display:none;">
+    <div id="race-ended-banner">
+      <div style="font-size:1.5rem;">🏁</div>
+      <div>
+        <div class="font-orb font-bold text-sm" style="color:#4ade80;">RACE SELESAI</div>
+        <div class="text-xs" style="color:var(--muted);">Semua pembalap sudah finish. Kamu masih bisa edit penalty/status di bawah.</div>
+      </div>
+      <button onclick="switchTab('results')" class="btn btn-success" style="margin-left:auto;white-space:nowrap;">Lihat Hasil →</button>
+    </div>
+
+    <div class="flex items-center justify-between mb-5 tab-page-header">
+      <div class="tab-page-title">
+        <h2 class="font-orb font-bold text-lg" style="color:var(--neon);">RACE DAY</h2>
+        <p class="text-sm" style="color:var(--muted);">Urutan sesuai hasil kualifikasi</p>
+      </div>
+      <div class="raceday-controls">
+        <div id="race-global-timer-display" class="mono text-sm px-3 py-1" style="background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:6px;color:var(--muted);">00:00.000</div>
+        <button onclick="startRace()" id="btn-race-start" class="btn btn-start-race font-orb">▶ START RACE</button>
+        <button onclick="resetRaceDay()" class="btn btn-danger">Reset</button>
+      </div>
+    </div>
+
+    <div id="raceday-grid"></div>
+  </div>
+
+  <!-- ===================== TAB: RESULTS ===================== -->
+  <div id="tab-content-results" style="display:none;">
+    <div class="flex items-center justify-between mb-5">
+      <div>
+        <h2 class="font-orb font-bold text-lg" style="color:var(--neon);">RACE RESULTS</h2>
+        <p class="text-sm" style="color:var(--muted);">Leaderboard akhir race day</p>
+      </div>
+      <button onclick="buildResults()" class="btn btn-primary">Refresh Hasil</button>
+    </div>
+    <div id="results-content"></div>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+let participants = JSON.parse(localStorage.getItem('cx_participants') || '[]');
+let qualTimes = JSON.parse(localStorage.getItem('cx_qual') || '{}');
+let raceTimes = JSON.parse(localStorage.getItem('cx_race') || '{}');
+
+// Qualifying stopwatch
+let qualTimerInterval = null;
+let qualStartTime = 0;
+let qualRunning = false;
+let qualCurrentMs = 0;
+
+// Race stopwatch
+let raceStartTimestamp = 0;
+let raceRunning = false;
+let raceEnded = false;
+let raceGlobalInterval = null;
+let raceStopIntervals = {};
+
+// Edit/penalty state
+let editContext = null;
+let penaltyContext = null;
+
+// ============================================================
+// UTILS
+// ============================================================
+function saveState() {
+  localStorage.setItem('cx_participants', JSON.stringify(participants));
+  localStorage.setItem('cx_qual', JSON.stringify(qualTimes));
+  localStorage.setItem('cx_race', JSON.stringify(raceTimes));
+}
+
+function formatMs(ms) {
+  if (ms === null || ms === undefined || ms < 0) return '--:--.---';
+  const totalSec = Math.floor(ms / 1000);
+  const min = Math.floor(totalSec / 60);
+  const sec = totalSec % 60;
+  const mil = ms % 1000;
+  return `${String(min).padStart(2,'0')}:${String(sec).padStart(2,'0')}.${String(mil).padStart(3,'0')}`;
+}
+
+function formatGap(ms) {
+  if (ms <= 0) return null;
+  const totalSec = Math.floor(ms / 1000);
+  const min = Math.floor(totalSec / 60);
+  const sec = totalSec % 60;
+  const mil = ms % 1000;
+  if (min > 0) return `+${min}:${String(sec).padStart(2,'0')}.${String(mil).padStart(3,'0')}`;
+  return `+${sec}.${String(mil).padStart(3,'0')}`;
+}
+
+function parseTimeStr(str) {
+  str = str.trim().replace(',', '.');
+  const re1 = /^(\d+):(\d{2})\.(\d{1,3})$/;
+  const re2 = /^(\d+)\.(\d{1,3})$/;
+  let m;
+  if ((m = str.match(re1))) return parseInt(m[1])*60000 + parseInt(m[2])*1000 + parseInt(m[3].padEnd(3,'0'));
+  if ((m = str.match(re2))) return parseInt(m[1])*1000 + parseInt(m[2].padEnd(3,'0'));
+  return null;
+}
+
+function genId() { return '_' + Math.random().toString(36).slice(2,9); }
+function getParticipant(id) { return participants.find(p => p.id === id); }
+
+function getQualTotal(id) {
+  const q = qualTimes[id];
+  if (!q || q.status === 'dns' || q.status === 'dnf' || q.status === 'dsq') return Infinity;
+  return (q.ms || 0) + (q.penalty || 0);
+}
+
+function getQualSorted() {
+  const withTime = participants.filter(p => qualTimes[p.id] && qualTimes[p.id].status === 'ok' && qualTimes[p.id].ms != null);
+  const dnf = participants.filter(p => qualTimes[p.id] && qualTimes[p.id].status === 'dnf');
+  const dsq = participants.filter(p => qualTimes[p.id] && qualTimes[p.id].status === 'dsq');
+  const dns = participants.filter(p => !qualTimes[p.id] || qualTimes[p.id].status === 'dns');
+  withTime.sort((a,b) => getQualTotal(a.id) - getQualTotal(b.id));
+  return [...withTime, ...dnf, ...dsq, ...dns];
+}
+
+function getRaceTotal(id) {
+  const r = raceTimes[id];
+  if (!r || r.status === 'dns' || r.status === 'dnf' || r.status === 'dsq') return Infinity;
+  if (r.ms == null) return Infinity;
+  return (r.ms || 0) + (r.penalty || 0);
+}
+
+function getRaceSorted() {
+  const sorted = getQualSorted();
+  const withTime = sorted.filter(p => raceTimes[p.id] && raceTimes[p.id].status === 'ok' && raceTimes[p.id].ms != null);
+  const dnf = sorted.filter(p => raceTimes[p.id] && raceTimes[p.id].status === 'dnf');
+  const dsq = sorted.filter(p => raceTimes[p.id] && raceTimes[p.id].status === 'dsq');
+  const dns = sorted.filter(p => !raceTimes[p.id] || (raceTimes[p.id].ms == null && raceTimes[p.id].status !== 'dnf' && raceTimes[p.id].status !== 'dsq'));
+  withTime.sort((a,b) => getRaceTotal(a.id) - getRaceTotal(b.id));
+  return [...withTime, ...dnf, ...dsq, ...dns];
+}
+
+// Check if all active racers have finished
+function checkAllFinished() {
+  if (!raceRunning) return false;
+  const sorted = getQualSorted();
+  const activeRacers = sorted.filter(p => {
+    const q = qualTimes[p.id];
+    return q && q.status === 'ok'; // only those who qualified
+  });
+  if (activeRacers.length === 0) return false;
+  return activeRacers.every(p => {
+    const r = raceTimes[p.id];
+    return r && (r.ms != null || r.status === 'dnf' || r.status === 'dns' || r.status === 'dsq');
+  });
+}
+
+function triggerRaceEnd() {
+  raceRunning = false;
+  raceEnded = true;
+  clearInterval(raceGlobalInterval);
+  Object.values(raceStopIntervals).forEach(clearInterval);
+  raceStopIntervals = {};
+
+  // Show ended overlay
+  document.getElementById('raceEndedOverlay').style.display = 'flex';
+}
+
+function closeRaceEnded() {
+  document.getElementById('raceEndedOverlay').style.display = 'none';
+  switchTab('results');
+}
+
+// ============================================================
+// TABS
+// ============================================================
+const TABS = ['participants','qualifying','standing','raceday','results'];
+
+function switchTab(tab) {
+  TABS.forEach(t => {
+    document.getElementById('tab-content-'+t).style.display = (t===tab) ? '' : 'none';
+    // Desktop nav
+    const btn = document.getElementById('tab-'+t);
+    if (btn) btn.className = t===tab ? 'btn tab-active' : 'btn btn-ghost';
+    // Mobile nav
+    const mobBtn = document.getElementById('mob-tab-'+t);
+    if (mobBtn) mobBtn.className = t===tab ? 'tab-active' : '';
+  });
+  if (tab === 'qualifying') buildQualifyingUI();
+  if (tab === 'standing') buildStanding();
+  if (tab === 'raceday') buildRaceDay();
+  if (tab === 'results') buildResults();
+  // Scroll to top on tab switch
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ============================================================
+// PARTICIPANTS
+// ============================================================
+function addParticipant() {
+  const num = document.getElementById('inp-num').value.trim();
+  const name = document.getElementById('inp-name').value.trim();
+  if (!name) { alert('Nama peserta harus diisi!'); return; }
+  if (!num) { alert('Nomor peserta harus diisi!'); return; }
+  if (participants.find(p => p.num === num)) { alert('Nomor sudah dipakai!'); return; }
+  participants.push({ id: genId(), num, name });
+  document.getElementById('inp-num').value = '';
+  document.getElementById('inp-name').value = '';
+  saveState();
+  renderParticipants();
+  updateStats();
+}
+
+function removeParticipant(id) {
+  if (!confirm('Hapus peserta ini?')) return;
+  participants = participants.filter(p => p.id !== id);
+  delete qualTimes[id];
+  delete raceTimes[id];
+  saveState();
+  renderParticipants();
+  updateStats();
+}
+
+function clearAllParticipants() {
+  if (!confirm('Hapus semua peserta dan data?')) return;
+  participants = []; qualTimes = {}; raceTimes = {};
+  raceRunning = false; raceEnded = false;
+  saveState();
+  renderParticipants();
+  updateStats();
+}
+
+function renderParticipants() {
+  const tbody = document.getElementById('participants-table');
+  const empty = document.getElementById('participants-empty');
+  if (participants.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = '';
+    return;
+  }
+  empty.style.display = 'none';
+  tbody.innerHTML = participants.map((p,i) => {
+    const q = qualTimes[p.id];
+    const hasQual = q && q.ms != null;
+    const status = q ? q.status : 'pending';
+    let badge = '';
+    if (status === 'dnf') badge = '<span class="badge-dnf" style="font-size:11px;padding:2px 8px;border-radius:4px;">DNF</span>';
+    else if (status === 'dns') badge = '<span class="badge-dns" style="font-size:11px;padding:2px 8px;border-radius:4px;">DNS</span>';
+    else if (status === 'dsq') badge = '<span class="badge-dsq" style="font-size:11px;padding:2px 8px;border-radius:4px;">DSQ</span>';
+    else if (hasQual) badge = '<span class="badge-ok" style="font-size:11px;padding:2px 8px;border-radius:4px;">Q ✓</span>';
+    else badge = '<span style="font-size:11px;padding:2px 8px;border-radius:4px;background:rgba(100,116,139,0.1);color:var(--muted);border:1px solid rgba(100,116,139,0.2);">PENDING</span>';
+    return `<tr class="${i%2===0?'stripe-odd':''}">
+      <td class="mono text-xs" style="color:var(--muted);">${i+1}</td>
+      <td class="font-orb font-bold" style="color:var(--neon);">#${p.num}</td>
+      <td class="font-bold">${p.name}</td>
+      <td>${badge}</td>
+      <td><button onclick="removeParticipant('${p.id}')" class="btn btn-danger" style="font-size:11px;padding:4px 10px;">Hapus</button></td>
+    </tr>`;
+  }).join('');
+  document.getElementById('stat-total').textContent = participants.length;
+}
+
+function updateStats() {
+  document.getElementById('stat-total').textContent = participants.length;
+}
+
+// ============================================================
+// QUALIFYING
+// ============================================================
+function buildQualifyingUI() {
+  const sel = document.getElementById('qual-select');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">-- Pilih Peserta --</option>' +
+    participants.map(p => `<option value="${p.id}">#${p.num} — ${p.name}</option>`).join('');
+  if (cur) sel.value = cur;
+  renderQualifyingTable();
+}
+
+function qualSelectChange() {
+  const sel = document.getElementById('qual-select');
+  const p = getParticipant(sel.value);
+  document.getElementById('qual-current-label').textContent = p ? `#${p.num} ${p.name}` : '— pilih peserta —';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('qual-select').addEventListener('change', qualSelectChange);
+});
+
+function qualStart() {
+  const sel = document.getElementById('qual-select');
+  if (!sel.value) { alert('Pilih peserta dulu!'); return; }
+  if (qualRunning) return;
+  qualRunning = true;
+  qualStartTime = Date.now() - qualCurrentMs;
+  document.getElementById('btn-qual-start').disabled = true;
+  document.getElementById('btn-qual-stop').disabled = false;
+  const disp = document.getElementById('qual-timer-display');
+  disp.className = 'timer-big timer-running';
+  qualTimerInterval = setInterval(() => {
+    qualCurrentMs = Date.now() - qualStartTime;
+    disp.textContent = formatMs(qualCurrentMs);
+  }, 50);
+}
+
+function qualStop() {
+  if (!qualRunning) return;
+  qualRunning = false;
+  clearInterval(qualTimerInterval);
+  const sel = document.getElementById('qual-select');
+  const id = sel.value;
+  if (!id) return;
+  saveQualTime(id, qualCurrentMs);
+  document.getElementById('btn-qual-start').disabled = false;
+  document.getElementById('btn-qual-stop').disabled = true;
+  const disp = document.getElementById('qual-timer-display');
+  disp.className = 'timer-big timer-stopped';
+  qualCurrentMs = 0;
+  disp.textContent = formatMs(0);
+}
+
+function qualReset() {
+  if (qualRunning) { clearInterval(qualTimerInterval); qualRunning = false; }
+  qualCurrentMs = 0;
+  document.getElementById('qual-timer-display').textContent = formatMs(0);
+  document.getElementById('qual-timer-display').className = 'timer-big timer-stopped ticking';
+  document.getElementById('btn-qual-start').disabled = false;
+  document.getElementById('btn-qual-stop').disabled = true;
+}
+
+function qualManualInput() {
+  const sel = document.getElementById('qual-select');
+  if (!sel.value) { alert('Pilih peserta dulu!'); return; }
+  const str = document.getElementById('qual-manual-time').value;
+  const ms = parseTimeStr(str);
+  if (ms === null) { alert('Format waktu salah. Gunakan mm:ss.mmm'); return; }
+  saveQualTime(sel.value, ms);
+  document.getElementById('qual-manual-time').value = '';
+}
+
+function saveQualTime(id, ms) {
+  if (!qualTimes[id]) qualTimes[id] = { ms: null, penalty: 0, status: 'ok' };
+  const existing = qualTimes[id];
+  if (existing.status === 'dnf' || existing.status === 'dns' || existing.status === 'dsq') {
+    if (!confirm('Peserta ini punya status DNF/DNS/DSQ. Timpa dengan waktu baru?')) return;
+  }
+  if (existing.ms !== null && existing.status === 'ok') {
+    if (ms >= existing.ms) {
+      if (!confirm(`Waktu baru (${formatMs(ms)}) lebih lambat dari best time (${formatMs(existing.ms)}). Simpan quand même?`)) return;
+    }
+  }
+  qualTimes[id] = { ...qualTimes[id], ms, status: 'ok', penalty: qualTimes[id]?.penalty || 0 };
+  saveState();
+  renderQualifyingTable();
+}
+
+function renderQualifyingTable() {
+  const tbody = document.getElementById('qualifying-table');
+  const empty = document.getElementById('qualifying-empty');
+  const sorted = getQualSorted();
+  const unrecorded = participants.filter(p => !qualTimes[p.id]);
+  const all = [...sorted.filter(p => qualTimes[p.id]), ...unrecorded];
+
+  if (all.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = '';
+    return;
+  }
+  empty.style.display = 'none';
+
+  // Find leader time
+  const leaderEntry = all.find(p => qualTimes[p.id] && qualTimes[p.id].status === 'ok' && qualTimes[p.id].ms != null);
+  const leaderTotal = leaderEntry ? getQualTotal(leaderEntry.id) : null;
+
+  let posCounter = 1;
+  tbody.innerHTML = all.map((p,i) => {
+    const q = qualTimes[p.id];
+    const status = q ? q.status : 'pending';
+    const ms = q ? q.ms : null;
+    const pen = q ? (q.penalty || 0) : 0;
+    const total = ms !== null && status === 'ok' ? ms + pen : null;
+    const isFinisher = status === 'ok' && total !== null;
+    const pos = isFinisher ? posCounter++ : '—';
+
+    // Gap calculation
+    let gapHtml = '—';
+    if (isFinisher && leaderTotal !== null) {
+      if (pos === 1) {
+        gapHtml = '<span class="gap-badge gap-leader">LEADER</span>';
+      } else {
+        const gapMs = total - leaderTotal;
+        gapHtml = `<span class="gap-badge gap-normal">${formatGap(gapMs)}</span>`;
+      }
+    }
+
+    let statusBadge = '';
+    if (status === 'dnf') statusBadge = '<span class="badge-dnf" style="font-size:11px;padding:2px 8px;border-radius:4px;">DNF</span>';
+    else if (status === 'dns') statusBadge = '<span class="badge-dns" style="font-size:11px;padding:2px 8px;border-radius:4px;">DNS</span>';
+    else if (status === 'dsq') statusBadge = '<span class="badge-dsq" style="font-size:11px;padding:2px 8px;border-radius:4px;">DSQ</span>';
+    else if (status === 'ok' && ms !== null) statusBadge = '<span class="badge-ok" style="font-size:11px;padding:2px 8px;border-radius:4px;">OK</span>';
+    else statusBadge = '<span style="font-size:11px;padding:2px 8px;border-radius:4px;background:rgba(100,116,139,0.1);color:var(--muted);border:1px solid rgba(100,116,139,0.2);">—</span>';
+
+    const posClass = pos===1?'pos-1':pos===2?'pos-2':pos===3?'pos-3':'';
+    return `<tr>
+      <td class="font-orb font-bold ${posClass}">${pos}</td>
+      <td class="font-orb" style="color:var(--neon);">#${p.num}</td>
+      <td class="font-bold">${p.name}</td>
+      <td class="mono text-sm">${ms!==null?formatMs(ms):'—'}</td>
+      <td class="mono text-sm" style="color:${pen>0?'#fbbf24':'var(--muted)'};">${pen>0?'+'+formatMs(pen):'—'}</td>
+      <td class="mono text-sm font-bold">${total!==null?formatMs(total):'—'}</td>
+      <td>${gapHtml}</td>
+      <td>${statusBadge}</td>
+      <td>
+        <div class="flex gap-1 flex-wrap">
+          <button onclick="openEditModal('qual','${p.id}')" class="btn btn-primary" style="font-size:11px;padding:3px 10px;">✎ Edit Time</button>
+          <button onclick="openPenaltyModal('qual','${p.id}')" class="btn btn-warn" style="font-size:11px;padding:3px 8px;">+Pen</button>
+          <button onclick="setQualStatus('${p.id}','dnf')" class="btn btn-danger" style="font-size:11px;padding:3px 8px;">DNF</button>
+          <button onclick="setQualStatus('${p.id}','dns')" class="btn btn-ghost" style="font-size:11px;padding:3px 8px;">DNS</button>
+          <button onclick="setQualStatus('${p.id}','dsq')" class="btn btn-dsq" style="font-size:11px;padding:3px 8px;">DSQ</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function setQualStatus(id, status) {
+  if (!qualTimes[id]) qualTimes[id] = { ms: null, penalty: 0, status };
+  else qualTimes[id].status = status;
+  saveState();
+  renderQualifyingTable();
+}
+
+function resetQualifying() {
+  if (!confirm('Reset semua data kualifikasi?')) return;
+  qualTimes = {};
+  saveState();
+  renderQualifyingTable();
+}
+
+// ============================================================
+// STANDING
+// ============================================================
+function buildStanding() {
+  const sorted = getQualSorted();
+  const container = document.getElementById('standing-content');
+
+  if (participants.length === 0) {
+    container.innerHTML = '<div class="text-center py-12" style="color:var(--muted);">Belum ada peserta</div>';
+    return;
+  }
+
+  const medals = ['🥇','🥈','🥉'];
+  let posGrid = 1;
+
+  // Find leader
+  const leaderEntry = sorted.find(p => qualTimes[p.id] && qualTimes[p.id].status === 'ok' && qualTimes[p.id].ms != null);
+  const leaderTotal = leaderEntry ? getQualTotal(leaderEntry.id) : null;
+
+  container.innerHTML = `
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+      <div class="px-5 py-4" style="border-bottom:1px solid var(--border);">
+        <div class="font-orb font-bold text-sm" style="color:var(--neon);">GRID START RACE DAY</div>
+        <div class="text-xs mt-1" style="color:var(--muted);">DNF/DNS/DSQ akan start dari posisi belakang</div>
+      </div>
+      <table>
+        <thead><tr>
+          <th>GRID</th><th>NO</th><th>NAMA</th><th>BEST TIME</th><th>PENALTY</th><th>TOTAL</th><th>GAP</th><th>STATUS</th>
+        </tr></thead>
+        <tbody>
+        ${sorted.map((p,i) => {
+          const q = qualTimes[p.id];
+          const status = q ? q.status : 'dns';
+          const ms = q ? q.ms : null;
+          const pen = q ? (q.penalty||0) : 0;
+          const total = (ms!==null && status==='ok') ? ms+pen : null;
+          const isFinisher = status==='ok' && total!==null;
+          const grid = isFinisher ? posGrid++ : '—';
+
+          // Gap
+          let gapHtml = '—';
+          if (isFinisher && leaderTotal !== null) {
+            if (grid === 1) gapHtml = '<span class="gap-badge gap-leader">LEADER</span>';
+            else gapHtml = `<span class="gap-badge gap-normal">${formatGap(total - leaderTotal)}</span>`;
+          }
+
+          let statusBadge = '';
+          if (status === 'dnf') statusBadge = '<span class="badge-dnf" style="font-size:11px;padding:2px 8px;border-radius:4px;">DNF</span>';
+          else if (status === 'dsq') statusBadge = '<span class="badge-dsq" style="font-size:11px;padding:2px 8px;border-radius:4px;">DSQ</span>';
+          else if (status === 'dns') statusBadge = '<span class="badge-dns" style="font-size:11px;padding:2px 8px;border-radius:4px;">DNS</span>';
+          else statusBadge = '<span class="badge-ok" style="font-size:11px;padding:2px 8px;border-radius:4px;">OK</span>';
+
+          const posClass = grid===1?'pos-1':grid===2?'pos-2':grid===3?'pos-3':'';
+          const rowStyle = grid===1 && isFinisher ? 'background:rgba(59,130,246,0.05);' : '';
+          const medal = grid <= 3 && isFinisher ? medals[grid-1]+' ' : '';
+          return `<tr style="${rowStyle}">
+            <td>
+              <div class="pos-circle ${posClass}" style="background:${isFinisher?'rgba(59,130,246,0.1)':'rgba(100,116,139,0.1)'};border:1px solid ${isFinisher?'rgba(59,130,246,0.3)':'rgba(100,116,139,0.2)'};">
+                ${isFinisher?grid:'—'}
+              </div>
+            </td>
+            <td class="font-orb font-bold" style="color:var(--neon);">#${p.num}</td>
+            <td class="font-bold">${medal}${p.name}</td>
+            <td class="mono text-sm">${ms!==null?formatMs(ms):'—'}</td>
+            <td class="mono text-sm" style="color:${pen>0?'#fbbf24':'var(--muted)'};">${pen>0?'+'+formatMs(pen):'—'}</td>
+            <td class="mono text-sm font-bold">${total!==null?formatMs(total):'—'}</td>
+            <td>${gapHtml}</td>
+            <td>${statusBadge}</td>
+          </tr>`;
+        }).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div class="text-center mt-4">
+      <button onclick="switchTab('raceday')" class="btn btn-primary" style="font-size:15px;padding:10px 32px;">Lanjut ke Race Day →</button>
+    </div>
+  `;
+}
+
+// ============================================================
+// RACE DAY
+// ============================================================
+function buildRaceDay() {
+  const sorted = getQualSorted();
+  const container = document.getElementById('raceday-grid');
+  const banner = document.getElementById('race-ended-banner');
+
+  banner.style.display = raceEnded ? 'flex' : 'none';
+
+  if (sorted.length === 0) {
+    container.innerHTML = '<div class="text-center py-12" style="color:var(--muted);">Selesaikan kualifikasi dulu</div>';
+    return;
+  }
+
+  // Count finish order for sorting display
+  const finishedInOrder = Object.entries(raceTimes)
+    .filter(([id, r]) => r.ms != null && r.status === 'ok')
+    .sort((a,b) => a[1].ms - b[1].ms)
+    .map(([id]) => id);
+
+  let gridPos = 1;
+  container.innerHTML = `
+    ${raceEnded ? '<div class="post-race-notice">🏁 Race sudah selesai. Kamu masih bisa mengubah penalty, DNS, DNF, atau DSQ di bawah.</div>' : ''}
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;">
+    ${sorted.map(p => {
+      const raceData = raceTimes[p.id];
+      const status = raceData ? raceData.status : null;
+      const stopped = raceData && raceData.ms != null;
+      const isDNF = status === 'dnf';
+      const isDNS = status === 'dns';
+      const isDSQ = status === 'dsq';
+      const isSpecialStatus = isDNF || isDNS || isDSQ;
+      const pen = raceData ? (raceData.penalty || 0) : 0;
+      const total = stopped && !isDNF && !isDNS && !isDSQ ? (raceData.ms + pen) : null;
+      const isRunning = raceRunning && !stopped && !isSpecialStatus;
+      const qStatus = qualTimes[p.id] ? qualTimes[p.id].status : 'dns';
+      const gp = (qStatus === 'ok') ? gridPos++ : '—';
+
+      // Finish order badge
+      const finishIdx = finishedInOrder.indexOf(p.id);
+      const finishOrderBadge = finishIdx >= 0 ? `<span class="finish-order" title="Urutan finish">P${finishIdx+1}</span>` : '';
+
+      let cardBorder = '1px solid var(--border)';
+      if (isDNF) cardBorder = '1px solid rgba(239,68,68,0.4)';
+      else if (isDNS) cardBorder = '1px solid rgba(107,114,128,0.3)';
+      else if (isDSQ) cardBorder = '1px solid rgba(249,115,22,0.4)';
+      else if (stopped) cardBorder = '1px solid rgba(74,222,128,0.4)';
+      else if (isRunning) cardBorder = '1px solid rgba(74,222,128,0.6)';
+
+      let statusBadgeHtml = '';
+      if (isDNF) statusBadgeHtml = '<span class="badge-dnf" style="font-size:11px;padding:2px 8px;border-radius:4px;">DNF</span>';
+      else if (isDNS) statusBadgeHtml = '<span class="badge-dns" style="font-size:11px;padding:2px 8px;border-radius:4px;">DNS</span>';
+      else if (isDSQ) statusBadgeHtml = '<span class="badge-dsq" style="font-size:11px;padding:2px 8px;border-radius:4px;">DSQ</span>';
+      else if (stopped) statusBadgeHtml = '<span class="badge-finish" style="font-size:11px;padding:2px 8px;border-radius:4px;">FINISH ✓</span>';
+      else if (isRunning) statusBadgeHtml = '<span class="badge-running" style="font-size:11px;padding:2px 8px;border-radius:4px;">RACING</span>';
+      else statusBadgeHtml = '<span style="font-size:11px;padding:2px 8px;border-radius:4px;background:rgba(100,116,139,0.1);color:var(--muted);border:1px solid rgba(100,116,139,0.2);">GRID</span>';
+
+      let timerClass = isDNF?'timer-big timer-dnf':isDNS?'timer-big timer-dns':isDSQ?'timer-big timer-dsq':stopped?'timer-big timer-stopped':isRunning?'timer-big timer-running ticking':'timer-big timer-stopped';
+      let timerText = isDNF?'DNF':isDNS?'DNS':isDSQ?'DSQ':total!==null?formatMs(total):formatMs(0);
+
+      return `<div style="background:var(--card);border:${cardBorder};border-radius:12px;padding:16px;" id="race-card-${p.id}">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <div class="font-orb font-bold text-xs" style="background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);padding:3px 8px;border-radius:4px;color:var(--neon);">P${gp}</div>
+            <div class="font-orb font-bold text-sm" style="color:var(--neon);">#${p.num}</div>
+            ${finishOrderBadge}
+          </div>
+          <div id="race-status-${p.id}">${statusBadgeHtml}</div>
+        </div>
+        <div class="font-bold text-base mb-3">${p.name}</div>
+        <div id="race-timer-${p.id}" class="${timerClass}" style="margin-bottom:8px;">
+          ${timerText}
+        </div>
+        ${pen > 0 && !isSpecialStatus ? `<div class="text-xs mb-2" style="color:#fbbf24;">Penalty: +${formatMs(pen)}</div>` : ''}
+
+        <!-- Live gap display -->
+        <div id="race-gap-${p.id}" class="text-xs mb-3 gap-live" style="color:var(--muted);min-height:16px;"></div>
+
+        <div class="flex gap-1 flex-wrap">
+          ${!stopped && !isSpecialStatus && raceRunning ? `<button onclick="stopRacerTimer('${p.id}')" class="btn btn-stop" style="font-size:12px;flex:1;">■ FINISH</button>` : ''}
+          <button onclick="openEditModal('race','${p.id}')" class="btn btn-primary" style="font-size:11px;padding:4px 10px;">✎ Edit Time</button>
+          <button onclick="openPenaltyModal('race','${p.id}')" class="btn btn-warn" style="font-size:11px;padding:4px 8px;">+Pen</button>
+          <button onclick="setRaceStatus('${p.id}','dnf')" class="btn btn-danger" style="font-size:11px;padding:4px 8px;">DNF</button>
+          <button onclick="setRaceStatus('${p.id}','dns')" class="btn btn-ghost" style="font-size:11px;padding:4px 8px;">DNS</button>
+          <button onclick="setRaceStatus('${p.id}','dsq')" class="btn btn-dsq" style="font-size:11px;padding:4px 8px;">DSQ</button>
+        </div>
+      </div>`;
+    }).join('')}
+    </div>
+  `;
+
+  // If race running, restart display timers
+  if (raceRunning) {
+    clearInterval(raceGlobalInterval);
+    raceGlobalInterval = setInterval(() => {
+      updateRaceGlobalTimer();
+      updateLiveGaps();
+    }, 100);
+    sorted.forEach(p => {
+      const raceData = raceTimes[p.id];
+      if (!raceData || (raceData.ms == null && !raceData.status)) {
+        startRacerDisplayTimer(p.id);
+      }
+    });
+  } else if (raceEnded) {
+    // Show final gaps
+    updateLiveGaps();
+    const btn = document.getElementById('btn-race-start');
+    if (btn) { btn.disabled = true; btn.textContent = '🏁 RACE ENDED'; }
+  }
+}
+
+function updateLiveGaps() {
+  // Find current leader (lowest finished time or running time)
+  const sorted = getQualSorted();
+  const finished = sorted.filter(p => raceTimes[p.id] && raceTimes[p.id].ms != null && raceTimes[p.id].status !== 'dnf' && raceTimes[p.id].status !== 'dns' && raceTimes[p.id].status !== 'dsq');
+  
+  let leaderMs = null;
+  if (finished.length > 0) {
+    finished.sort((a,b) => getRaceTotal(a.id) - getRaceTotal(b.id));
+    leaderMs = getRaceTotal(finished[0].id);
+  } else if (raceRunning) {
+    leaderMs = Date.now() - raceStartTimestamp;
+  }
+
+  if (leaderMs === null) return;
+
+  sorted.forEach((p, idx) => {
+    const el = document.getElementById('race-gap-'+p.id);
+    if (!el) return;
+    const r = raceTimes[p.id];
+    const status = r ? r.status : null;
+    if (status === 'dnf' || status === 'dns' || status === 'dsq') {
+      el.textContent = '';
+      return;
+    }
+
+    const myMs = (r && r.ms != null) ? getRaceTotal(p.id) : (raceRunning ? Date.now() - raceStartTimestamp : null);
+    if (myMs === null) { el.textContent = ''; return; }
+
+    if (finished.length > 0 && finished[0].id === p.id) {
+      el.innerHTML = '<span class="gap-badge gap-leader" style="font-size:10px;">LEADER</span>';
+    } else {
+      const gap = myMs - leaderMs;
+      if (gap <= 0) {
+        el.innerHTML = '<span class="gap-badge gap-leader" style="font-size:10px;">LEADER</span>';
+      } else {
+        el.innerHTML = `<span class="gap-badge gap-normal" style="font-size:10px;">${formatGap(gap)}</span>`;
+      }
+    }
+  });
+}
+
+function startRace() {
+  if (raceRunning) return;
+  if (participants.length === 0) { alert('Tidak ada peserta!'); return; }
+
+  let count = 3;
+  const overlay = document.getElementById('raceCountdownOverlay');
+  const numEl = document.getElementById('countdownNum');
+  overlay.style.display = 'flex';
+
+  function doCount() {
+    numEl.style.animation = 'none';
+    void numEl.offsetWidth;
+    numEl.style.animation = 'countPop 0.9s ease forwards';
+    numEl.textContent = count;
+    if (count > 0) {
+      count--;
+      setTimeout(doCount, 900);
+    } else {
+      numEl.textContent = 'GO!';
+      numEl.style.color = '#4ade80';
+      setTimeout(() => {
+        overlay.style.display = 'none';
+        numEl.style.color = '';
+        actualStartRace();
+      }, 800);
+    }
+  }
+  doCount();
+}
+
+function actualStartRace() {
+  raceRunning = true;
+  raceEnded = false;
+  raceStartTimestamp = Date.now();
+  const btn = document.getElementById('btn-race-start');
+  btn.disabled = true;
+  btn.textContent = '⏱ RUNNING...';
+
+  raceGlobalInterval = setInterval(() => {
+    updateRaceGlobalTimer();
+    updateLiveGaps();
+    // Check auto-finish
+    if (checkAllFinished()) {
+      triggerRaceEnd();
+      buildRaceDay();
+    }
+  }, 100);
+
+  const sorted = getQualSorted();
+  sorted.forEach(p => {
+    const raceData = raceTimes[p.id];
+    if (!raceData || (raceData.ms == null && raceData.status !== 'dnf' && raceData.status !== 'dns' && raceData.status !== 'dsq')) {
+      startRacerDisplayTimer(p.id);
+    }
+  });
+
+  buildRaceDay();
+}
+
+function updateRaceGlobalTimer() {
+  const el = document.getElementById('race-global-timer-display');
+  if (!el) return;
+  const ms = Date.now() - raceStartTimestamp;
+  el.textContent = formatMs(ms);
+  el.style.color = '#4ade80';
+}
+
+function startRacerDisplayTimer(id) {
+  const el = document.getElementById('race-timer-'+id);
+  if (raceStopIntervals[id]) clearInterval(raceStopIntervals[id]);
+  raceStopIntervals[id] = setInterval(() => {
+    const cur = raceTimes[id];
+    if (cur && (cur.ms != null || cur.status === 'dnf' || cur.status === 'dns' || cur.status === 'dsq')) {
+      clearInterval(raceStopIntervals[id]);
+      return;
+    }
+    if (el) el.textContent = formatMs(Date.now() - raceStartTimestamp);
+  }, 50);
+}
+
+function stopRacerTimer(id) {
+  const ms = Date.now() - raceStartTimestamp;
+  clearInterval(raceStopIntervals[id]);
+  if (!raceTimes[id]) raceTimes[id] = { ms: null, penalty: 0, status: null };
+  raceTimes[id].ms = ms;
+  raceTimes[id].status = 'ok';
+  saveState();
+
+  const timerEl = document.getElementById('race-timer-'+id);
+  const pen = raceTimes[id].penalty || 0;
+  if (timerEl) {
+    timerEl.textContent = formatMs(ms + pen);
+    timerEl.className = 'timer-big timer-stopped';
+  }
+  const statusEl = document.getElementById('race-status-'+id);
+  if (statusEl) statusEl.innerHTML = '<span class="badge-finish" style="font-size:11px;padding:2px 8px;border-radius:4px;">FINISH ✓</span>';
+
+  const card = document.getElementById('race-card-'+id);
+  if (card) card.style.border = '1px solid rgba(74,222,128,0.4)';
+
+  // Check if all finished → auto-end race
+  if (checkAllFinished()) {
+    triggerRaceEnd();
+    buildRaceDay();
+  } else {
+    buildRaceDay();
+  }
+}
+
+function setRaceStatus(id, status) {
+  if (!raceTimes[id]) raceTimes[id] = { ms: null, penalty: 0, status };
+  else raceTimes[id].status = status;
+  if (status === 'dnf' || status === 'dns' || status === 'dsq') {
+    clearInterval(raceStopIntervals[id]);
+  }
+  saveState();
+
+  // Check auto-finish after status change
+  if (raceRunning && checkAllFinished()) {
+    triggerRaceEnd();
+  }
+  buildRaceDay();
+}
+
+function resetRaceDay() {
+  if (!confirm('Reset semua data race day?')) return;
+  raceTimes = {};
+  raceRunning = false;
+  raceEnded = false;
+  raceStartTimestamp = 0;
+  clearInterval(raceGlobalInterval);
+  Object.values(raceStopIntervals).forEach(clearInterval);
+  raceStopIntervals = {};
+  const btn = document.getElementById('btn-race-start');
+  if (btn) { btn.disabled = false; btn.textContent = '▶ START RACE'; }
+  const timerEl = document.getElementById('race-global-timer-display');
+  if (timerEl) { timerEl.textContent = '00:00.000'; timerEl.style.color = ''; }
+  saveState();
+  buildRaceDay();
+}
+
+// ============================================================
+// RESULTS
+// ============================================================
+function buildResults() {
+  const sorted = getRaceSorted();
+  const container = document.getElementById('results-content');
+
+  if (sorted.length === 0) {
+    container.innerHTML = '<div class="text-center py-12" style="color:var(--muted);">Belum ada data race</div>';
+    return;
+  }
+
+  const medals = ['🥇','🥈','🥉'];
+  let posCounter = 1;
+
+  // Leader
+  const leaderEntry = sorted.find(p => raceTimes[p.id] && raceTimes[p.id].ms != null && raceTimes[p.id].status === 'ok');
+  const leaderTotal = leaderEntry ? getRaceTotal(leaderEntry.id) : null;
+
+  // Podium top 3
+  const podium = sorted.filter(p => raceTimes[p.id] && raceTimes[p.id].ms != null && raceTimes[p.id].status === 'ok').slice(0,3);
+  const podiumHtml = podium.length > 0 ? `
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:20px;">
+    ${podium.map((p,i) => {
+      const r = raceTimes[p.id];
+      const total = getRaceTotal(p.id);
+      const gap = i > 0 && leaderTotal !== null ? formatGap(total - leaderTotal) : null;
+      const podiumClass = `podium-${i+1}`;
+      const posColor = i===0?'#fbbf24':i===1?'#94a3b8':'#c2824a';
+      return `<div class="podium-card ${podiumClass}">
+        <div style="font-size:2rem;margin-bottom:4px;">${medals[i]}</div>
+        <div class="font-orb font-bold text-xs" style="color:${posColor};letter-spacing:0.1em;">P${i+1}</div>
+        <div class="font-bold mt-1">${p.name}</div>
+        <div class="font-orb text-xs mt-1" style="color:var(--neon);">#${p.num}</div>
+        <div class="mono text-sm font-bold mt-2" style="color:${posColor};">${formatMs(total)}</div>
+        ${gap ? `<div class="text-xs mt-1" style="color:var(--muted);">${gap}</div>` : '<div class="text-xs mt-1" style="color:#4ade80;">WINNER</div>'}
+      </div>`;
+    }).join('')}
+    </div>
+  ` : '';
+
+  container.innerHTML = podiumHtml + `
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px;">
+      <div class="px-5 py-4" style="border-bottom:1px solid var(--border);">
+        <div class="font-orb font-bold text-sm" style="color:var(--neon);">RACE LEADERBOARD</div>
+        <div class="text-xs mt-1" style="color:var(--muted);">Post-race: masih bisa edit penalty/status dari tab Race Day</div>
+      </div>
+      <table>
+        <thead><tr>
+          <th>POS</th><th>NO</th><th>NAMA</th><th>RACE TIME</th><th>PENALTY</th><th>TOTAL</th><th>GAP</th><th>STATUS</th>
+        </tr></thead>
+        <tbody>
+        ${sorted.map((p,i) => {
+          const r = raceTimes[p.id];
+          const status = r ? r.status : null;
+          const ms = r ? r.ms : null;
+          const pen = r ? (r.penalty||0) : 0;
+          const isDNF = status === 'dnf';
+          const isDNS = !r || ms === null || status === 'dns';
+          const isDSQ = status === 'dsq';
+          const total = (!isDNF && !isDNS && !isDSQ && ms !== null) ? ms + pen : null;
+          const pos = total !== null ? posCounter++ : '—';
+
+          const gap = total !== null && leaderTotal !== null && pos > 1 ? formatGap(total - leaderTotal) : null;
+
+          let statusBadge = '';
+          if (isDNF) statusBadge = '<span class="badge-dnf" style="font-size:11px;padding:2px 8px;border-radius:4px;">DNF</span>';
+          else if (isDSQ) statusBadge = '<span class="badge-dsq" style="font-size:11px;padding:2px 8px;border-radius:4px;">DSQ</span>';
+          else if (isDNS) statusBadge = '<span class="badge-dns" style="font-size:11px;padding:2px 8px;border-radius:4px;">DNS</span>';
+          else statusBadge = '<span class="badge-finish" style="font-size:11px;padding:2px 8px;border-radius:4px;">FINISH</span>';
+
+          const posClass = pos===1?'pos-1':pos===2?'pos-2':pos===3?'pos-3':'';
+          const medal = pos <= 3 && total !== null ? medals[pos-1]+' ' : '';
+          const rowStyle = pos===1 ? 'background:rgba(59,130,246,0.06);' : '';
+          return `<tr style="${rowStyle}">
+            <td>
+              <div class="pos-circle ${posClass}" style="background:${total!==null?'rgba(59,130,246,0.1)':'rgba(100,116,139,0.1)'};border:1px solid ${total!==null?'rgba(59,130,246,0.3)':'rgba(100,116,139,0.2)'};">
+                ${pos}
+              </div>
+            </td>
+            <td class="font-orb font-bold" style="color:var(--neon);">#${p.num}</td>
+            <td class="font-bold">${medal}${p.name}</td>
+            <td class="mono text-sm">${ms!==null?formatMs(ms):'—'}</td>
+            <td class="mono text-sm" style="color:${pen>0?'#fbbf24':'var(--muted)'};">${pen>0?'+'+formatMs(pen):'—'}</td>
+            <td class="mono text-sm font-bold">${total!==null?formatMs(total):'—'}</td>
+            <td>${gap ? `<span class="gap-badge gap-normal">${gap}</span>` : pos===1&&total!==null ? '<span class="gap-badge gap-leader">LEADER</span>' : '—'}</td>
+            <td>${statusBadge}</td>
+          </tr>`;
+        }).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div class="text-center">
+      <button onclick="switchTab('raceday')" class="btn btn-ghost" style="font-size:13px;">← Kembali ke Race Day (edit penalty/status)</button>
+    </div>
+  `;
+}
+
+// ============================================================
+// EDIT MODAL
+// ============================================================
+function openEditModal(context, id) {
+  editContext = { context, id };
+  const p = getParticipant(id);
+  const data = context === 'qual' ? qualTimes[id] : raceTimes[id];
+  const ms = data ? data.ms : null;
+
+  // Decompose ms into parts
+  const curMin  = ms !== null ? Math.floor(ms / 60000) : 0;
+  const curSec  = ms !== null ? Math.floor((ms % 60000) / 1000) : 0;
+  const curMil  = ms !== null ? ms % 1000 : 0;
+  const curPen  = data ? (data.penalty || 0) : 0;
+  const penSec  = Math.floor(curPen / 1000);
+  const penMil  = curPen % 1000;
+
+  document.getElementById('edit-modal-subtitle').textContent =
+    `#${p.num} ${p.name}  ·  ${context === 'qual' ? 'Kualifikasi' : 'Race Day'}`;
+
+  document.getElementById('editModalContent').innerHTML = `
+    <!-- Current time display -->
+    <div style="background:rgba(0,0,0,0.35);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;">
+      <span class="text-xs" style="color:var(--muted);">Waktu sekarang</span>
+      <span class="font-bold text-sm" style="color:${ms!==null?'var(--neon)':'var(--muted)'};">${ms!==null ? formatMs(ms) : '—'}</span>
+    </div>
+
+    <!-- Split inputs -->
+    <div class="text-xs mb-2 font-bold" style="color:var(--muted);letter-spacing:0.05em;">WAKTU BARU</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:6px;">
+      <div>
+        <label class="block text-xs mb-1" style="color:var(--muted);">Menit</label>
+        <input type="number" id="et-min" value="${curMin}" min="0" max="99" style="text-align:center;font-size:20px;font-weight:700;padding:10px 6px;" oninput="previewEditTime()" />
+      </div>
+      <div>
+        <label class="block text-xs mb-1" style="color:var(--muted);">Detik</label>
+        <input type="number" id="et-sec" value="${curSec}" min="0" max="59" style="text-align:center;font-size:20px;font-weight:700;padding:10px 6px;" oninput="previewEditTime()" />
+      </div>
+      <div>
+        <label class="block text-xs mb-1" style="color:var(--muted);">Milidetik</label>
+        <input type="number" id="et-mil" value="${curMil}" min="0" max="999" style="text-align:center;font-size:20px;font-weight:700;padding:10px 6px;" oninput="previewEditTime()" />
+      </div>
+    </div>
+
+    <!-- OR: paste full string -->
+    <div style="border-top:1px solid var(--border);margin:14px 0 12px;display:flex;align-items:center;gap:8px;">
+      <span class="text-xs" style="color:var(--muted);">atau paste langsung</span>
+    </div>
+    <div class="flex gap-2 mb-4">
+      <input type="text" id="et-raw" placeholder="mm:ss.mmm  contoh: 01:23.456" style="flex:1;" oninput="applyRawTime()" />
+    </div>
+
+    <!-- Preview -->
+    <div id="et-preview" style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.25);border-radius:8px;padding:10px 14px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;">
+      <span class="text-xs" style="color:var(--muted);">Preview total</span>
+      <span id="et-preview-val" class="font-bold" style="color:var(--neon);font-size:1.1rem;">—</span>
+    </div>
+
+    <!-- Penalty section -->
+    <div class="text-xs mb-2 font-bold" style="color:var(--muted);letter-spacing:0.05em;">PENALTY</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px;">
+      <div>
+        <label class="block text-xs mb-1" style="color:var(--muted);">Detik</label>
+        <input type="number" id="ep-sec" value="${penSec}" min="0" style="text-align:center;font-size:18px;font-weight:700;padding:9px 6px;" oninput="previewEditTime()" />
+      </div>
+      <div>
+        <label class="block text-xs mb-1" style="color:var(--muted);">Milidetik</label>
+        <input type="number" id="ep-mil" value="${penMil}" min="0" max="999" style="text-align:center;font-size:18px;font-weight:700;padding:9px 6px;" oninput="previewEditTime()" />
+      </div>
+    </div>
+    <div class="flex flex-wrap gap-1 mb-5">
+      ${[0,1,2,3,5,10].map(s=>`<button onclick="setPenSec(${s})" class="btn btn-warn" style="font-size:11px;padding:3px 9px;">${s===0?'Hapus':'+'+s+'s'}</button>`).join('')}
+    </div>
+
+    <div class="flex gap-2 justify-end">
+      <button onclick="closeEditModal()" class="btn btn-ghost">Batal</button>
+      <button onclick="saveEditModal()" class="btn btn-primary" style="min-width:100px;">✓ Simpan</button>
+    </div>
+  `;
+  document.getElementById('editModal').style.display = 'flex';
+  previewEditTime();
+}
+
+function previewEditTime() {
+  const min = parseInt(document.getElementById('et-min').value) || 0;
+  const sec = Math.min(parseInt(document.getElementById('et-sec').value) || 0, 59);
+  const mil = Math.min(parseInt(document.getElementById('et-mil').value) || 0, 999);
+  const timeMs = min * 60000 + sec * 1000 + mil;
+  const penSec = parseInt(document.getElementById('ep-sec').value) || 0;
+  const penMil = Math.min(parseInt(document.getElementById('ep-mil').value) || 0, 999);
+  const penMs = penSec * 1000 + penMil;
+  const preview = document.getElementById('et-preview-val');
+  if (preview) {
+    preview.textContent = formatMs(timeMs) + (penMs > 0 ? '  (+' + formatMs(penMs) + ' pen)' : '');
+  }
+}
+
+function applyRawTime() {
+  const str = document.getElementById('et-raw').value;
+  const ms = parseTimeStr(str);
+  if (ms === null) return;
+  const min = Math.floor(ms / 60000);
+  const sec = Math.floor((ms % 60000) / 1000);
+  const mil = ms % 1000;
+  document.getElementById('et-min').value = min;
+  document.getElementById('et-sec').value = sec;
+  document.getElementById('et-mil').value = mil;
+  previewEditTime();
+}
+
+function setPenSec(s) {
+  document.getElementById('ep-sec').value = s;
+  document.getElementById('ep-mil').value = 0;
+  previewEditTime();
+}
+
+function saveEditModal() {
+  const { context, id } = editContext;
+  const min = parseInt(document.getElementById('et-min').value) || 0;
+  const sec = Math.min(parseInt(document.getElementById('et-sec').value) || 0, 59);
+  const mil = Math.min(parseInt(document.getElementById('et-mil').value) || 0, 999);
+  const ms = min * 60000 + sec * 1000 + mil;
+  const penSec = parseInt(document.getElementById('ep-sec').value) || 0;
+  const penMil = Math.min(parseInt(document.getElementById('ep-mil').value) || 0, 999);
+  const penMs = penSec * 1000 + penMil;
+
+  if (ms <= 0) { alert('Waktu tidak boleh 0!'); return; }
+
+  if (context === 'qual') {
+    if (!qualTimes[id]) qualTimes[id] = { ms: null, penalty: 0, status: 'ok' };
+    qualTimes[id].ms = ms;
+    qualTimes[id].penalty = penMs;
+    qualTimes[id].status = 'ok';
+  } else {
+    if (!raceTimes[id]) raceTimes[id] = { ms: null, penalty: 0, status: 'ok' };
+    raceTimes[id].ms = ms;
+    raceTimes[id].penalty = penMs;
+    raceTimes[id].status = 'ok';
+  }
+  saveState();
+  closeEditModal();
+  if (context === 'qual') renderQualifyingTable();
+  else buildRaceDay();
+}
+
+function closeEditModal() {
+  document.getElementById('editModal').style.display = 'none';
+  editContext = null;
+}
+
+// ============================================================
+// PENALTY MODAL
+// ============================================================
+function openPenaltyModal(context, id) {
+  penaltyContext = { context, id };
+  const p = getParticipant(id);
+  const data = context === 'qual' ? qualTimes[id] : raceTimes[id];
+  const curPen = data ? (data.penalty || 0) : 0;
+
+  document.getElementById('penaltyModalContent').innerHTML = `
+    <div class="text-sm mb-4" style="color:var(--muted);">Peserta: <span class="font-bold" style="color:var(--text);">#${p.num} ${p.name}</span></div>
+    <div class="text-xs mb-2" style="color:var(--muted);">Penalty saat ini: <span class="mono font-bold" style="color:#fbbf24;">${formatMs(curPen)}</span></div>
+
+    <div class="text-xs mb-3" style="color:var(--muted);letter-spacing:0.05em;">TAMBAH PENALTY CEPAT</div>
+    <div class="flex flex-wrap gap-2 mb-4">
+      ${[1,2,3,5,10].map(sec => `<button onclick="addPenaltyQuick(${sec*1000})" class="btn btn-warn" style="flex:1;min-width:60px;">+${sec}s</button>`).join('')}
+    </div>
+
+    <div class="text-xs mb-2" style="color:var(--muted);letter-spacing:0.05em;">ATAU INPUT MANUAL (detik)</div>
+    <div class="flex gap-2 mb-4">
+      <input type="number" id="penalty-custom-input" placeholder="Contoh: 10" min="0" style="flex:1;" />
+      <button onclick="addPenaltyCustom()" class="btn btn-warn">Tambah</button>
+    </div>
+
+    <div class="text-xs mb-2" style="color:var(--muted);">ATAU SET TOTAL PENALTY (mm:ss.mmm)</div>
+    <div class="flex gap-2 mb-5">
+      <input type="text" id="penalty-set-input" placeholder="00:05.000" style="flex:1;" />
+      <button onclick="setPenaltyTotal()" class="btn btn-primary">Set</button>
+    </div>
+
+    <div class="flex gap-2 justify-end">
+      <button onclick="resetPenalty()" class="btn btn-danger">Reset Penalty</button>
+      <button onclick="closePenaltyModal()" class="btn btn-ghost">Tutup</button>
+    </div>
+  `;
+  document.getElementById('penaltyModal').style.display = 'flex';
+}
+
+function addPenaltyQuick(ms) {
+  const { context, id } = penaltyContext;
+  const dict = context === 'qual' ? qualTimes : raceTimes;
+  if (!dict[id]) dict[id] = { ms: null, penalty: 0, status: context==='qual'?'ok':null };
+  dict[id].penalty = (dict[id].penalty || 0) + ms;
+  saveState();
+  openPenaltyModal(context, id);
+  if (context === 'qual') renderQualifyingTable();
+  else buildRaceDay();
+}
+
+function addPenaltyCustom() {
+  const sec = parseFloat(document.getElementById('penalty-custom-input').value);
+  if (isNaN(sec) || sec <= 0) { alert('Masukkan jumlah detik yang valid!'); return; }
+  addPenaltyQuick(Math.round(sec * 1000));
+}
+
+function setPenaltyTotal() {
+  const str = document.getElementById('penalty-set-input').value;
+  const ms = parseTimeStr(str);
+  if (ms === null) { alert('Format salah!'); return; }
+  const { context, id } = penaltyContext;
+  const dict = context === 'qual' ? qualTimes : raceTimes;
+  if (!dict[id]) dict[id] = { ms: null, penalty: 0, status: context==='qual'?'ok':null };
+  dict[id].penalty = ms;
+  saveState();
+  openPenaltyModal(context, id);
+  if (context === 'qual') renderQualifyingTable();
+  else buildRaceDay();
+}
+
+function resetPenalty() {
+  const { context, id } = penaltyContext;
+  const dict = context === 'qual' ? qualTimes : raceTimes;
+  if (dict[id]) dict[id].penalty = 0;
+  saveState();
+  openPenaltyModal(context, id);
+  if (context === 'qual') renderQualifyingTable();
+  else buildRaceDay();
+}
+
+function closePenaltyModal() {
+  document.getElementById('penaltyModal').style.display = 'none';
+  penaltyContext = null;
+}
+
+// ============================================================
+// INIT
+// ============================================================
+renderParticipants();
+updateStats();
+</script>
+</body>
+</html>
