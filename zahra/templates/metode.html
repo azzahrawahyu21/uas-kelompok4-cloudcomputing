@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Metode Kriptografi | ENDES</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen bg-black text-gray-100">
+
+  <!-- Navbar include -->
+  {% include 'component/navbar.html' %}
+
+  <!-- Main Content -->
+  <main class="pt-14 md:pt-10 flex flex-col items-center justify-center text-center">
+
+    <section
+      class="flex flex-col justify-start items-center text-center px-6 bg-cover bg-center relative min-h-screen pt-24"
+      style="background-image: url('{{ url_for('static', filename='back.jpg') }}');">
+
+      <div class="absolute inset-0 bg-black bg-opacity-80"></div>
+
+      <div class="relative z-20 max-w-6xl -mt-8">
+
+        <h2 class="text-3xl md:text-5xl font-bold mb-4 text-white">METODE</h2>
+        <h1 class="text-4xl md:text-6xl font-extrabold text-blue-500 mb-6">KRIPTOGRAFI</h1>
+
+        <p class="max-w-2xl mx-auto text-gray-200 mb-10">
+          Berikut beberapa metode enkripsi yang digunakan untuk mengamankan pesan.
+          Tiap metode memiliki karakteristik dan tingkat keamanan yang berbeda.
+        </p>
+
+        <!-- Grid Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+          <div class="bg-[#0000]/70 border border-blue-800/40 rounded-xl p-5 text-center hover:scale-105 transition">
+            <h2 class="text-lg font-semibold text-blue-300 mb-2">Rail Fence Cipher</h2>
+            <p class="text-sm text-gray-300">
+              Menyusun plaintext dalam pola Rail Fence untuk menghasilkan ciphertext.
+            </p>
+          </div>
+
+          <div class="bg-[#0000]/70 border border-blue-800/40 rounded-xl p-5 text-center hover:scale-105 transition">
+            <h2 class="text-lg font-semibold text-blue-300 mb-2">Vigenere Cipher</h2>
+            <p class="text-sm text-gray-300">
+              Menggunakan kunci teks untuk menggeser huruf plaintext.
+            </p>
+          </div>
+
+          <div class="bg-[#0000]/70 border border-blue-800/40 rounded-xl p-5 text-center hover:scale-105 transition">
+            <h2 class="text-lg font-semibold text-blue-300 mb-2">Stream Cipher (LFSR)</h2>
+            <p class="text-sm text-gray-300">
+              Menggunakan bit stream kunci untuk mengenkripsi data secara berurutan.
+            </p>
+          </div>
+
+          <div class="bg-[#0000]/70 border border-blue-800/40 rounded-xl p-5 text-center hover:scale-105 transition">
+            <h2 class="text-lg font-semibold text-blue-300 mb-2">AES Cipher</h2>
+            <p class="text-sm text-gray-300">
+              Algoritma simetris berbasis blok modern yang sangat aman.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="bg-black text-gray-500 text-center py-6 border-t border-gray-800">
+    © 2025 Endes Kriptografi | Dibuat oleh Kelompok 1 Kriptografi
+  </footer>
+
+</body>
+
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Stream Cipher (LFSR)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    function copyResult() {
+      const text = document.getElementById("cipherResult").innerText;
+      navigator.clipboard.writeText(text);
+    }
+  </script>
+</head>
+
+<body class="bg-white text-white">
+
+  <!-- NAVBAR INCLUDE -->
+  {% include 'component/navbar.html' %}
+
+  <!-- Konten utama dengan background -->
+  <section
+    class="flex flex-col justify-start items-center text-center px-6 bg-cover bg-center relative min-h-screen pt-24"
+    style="background-image: url('{{ url_for('static', filename='back.jpg') }}');">
+
+    <!-- Overlay gelap -->
+    <div class="absolute inset-0 bg-black bg-opacity-80"></div>
+
+    <!-- Konten Stream Cipher -->
+    <div class="relative z-10 bg-gray-900/90 p-8 rounded-xl shadow-lg w-full max-w-3xl text-center">
+      <h1 class="text-3xl font-bold text-blue-600 mb-6">Stream Cipher (LFSR)</h1>
+
+      <!-- Form -->
+      <form method="POST" class="space-y-4">
+        <textarea name="text" placeholder="Masukkan teks (plaintext/ciphertext)"
+          class="w-full p-3 rounded bg-gray-800 text-white resize-none focus:outline-none focus:ring-2 focus:ring-blue-600"
+          rows="4">{{ text }}</textarea>
+
+        <input type="text" name="key" placeholder="Masukkan key (seed atau teks)" value="{{ key }}"
+          class="w-full p-3 rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-600" />
+
+        <select name="mode"
+          class="w-full p-3 rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-600">
+          <option value="encrypt" {% if mode=='encrypt' %}selected{% endif %}>Enkripsi</option>
+          <option value="decrypt" {% if mode=='decrypt' %}selected{% endif %}>Dekripsi</option>
+        </select>
+
+        <button type="submit" class="w-full bg-blue-600 py-2 rounded-lg hover:bg-blue-700 transition">
+          Proses
+        </button>
+      </form>
+
+      <!-- Hasil -->
+      {% if result %}
+      <div class="mt-6 bg-gray-800 p-4 rounded text-left">
+        {% if mode == "encrypt" %}
+        <p class="font-semibold text-lg text-blue-400">Hasil Cipher (Biner):</p>
+        {% else %}
+        <p class="font-semibold text-lg text-blue-400">Hasil Dekripsi (Plaintext):</p>
+        {% endif %}
+        <p id="cipherResult" class="break-all text-gray-100 font-mono">{{ result }}</p>
+        <button onclick="copyResult()" class="bg-gray-600 hover:bg-gray-500 px-3 py-1 rounded mt-2">
+          Copy
+        </button>
+      </div>
+
+      <!-- Tabel XOR -->
+      <div class="mt-6 bg-gray-800 p-4 rounded">
+        <p class="font-semibold text-lg mb-2 text-blue-400">Proses XOR:</p>
+        <div class="overflow-x-auto">
+          <table class="border border-gray-600 border-collapse mx-auto text-sm text-gray-300">
+            <thead class="bg-gray-700 text-white">
+              <tr>
+                {% if mode == "encrypt" %}
+                <th class="px-2 py-1 border border-gray-600">Plaintext Bit</th>
+                <th class="px-2 py-1 border border-gray-600">Keystream</th>
+                <th class="px-2 py-1 border border-gray-600">Cipher Bit</th>
+                {% else %}
+                <th class="px-2 py-1 border border-gray-600">Cipher Bit</th>
+                <th class="px-2 py-1 border border-gray-600">Keystream</th>
+                <th class="px-2 py-1 border border-gray-600">Plaintext Bit</th>
+                {% endif %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in proses %}
+              <tr class="hover:bg-gray-700">
+                {% if mode == "encrypt" %}
+                <td class="border border-gray-600 px-2 py-1">{{ row.pt }}</td>
+                <td class="border border-gray-600 px-2 py-1">{{ row.ks }}</td>
+                <td class="border border-gray-600 px-2 py-1">{{ row.ct }}</td>
+                {% else %}
+                <td class="border border-gray-600 px-2 py-1">{{ row.ct }}</td>
+                <td class="border border-gray-600 px-2 py-1">{{ row.ks }}</td>
+                <td class="border border-gray-600 px-2 py-1">{{ row.pt }}</td>
+                {% endif %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-black text-gray-500 text-center py-6 border-t border-gray-800">
+    © 2025 Endes Kriptografi | Dibuat oleh Kelompok 1 Kriptografi
+  </footer>
+
+</body>
+
+</html>

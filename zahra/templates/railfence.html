@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Rail Fence Cipher</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    function copyResult() {
+      const text = document.getElementById("cipherResult").innerText;
+      navigator.clipboard.writeText(text);
+    }
+  </script>
+</head>
+
+<body class="text-white">
+
+  <!-- NAVBAR -->
+  {% include 'component/navbar.html' %}
+
+  <!-- PAGE CONTENT -->
+  <section
+    class="flex flex-col justify-start items-center text-center px-6 bg-cover bg-center relative min-h-screen pt-24"
+    style="background-image: url('{{ url_for('static', filename='back.jpg') }}');">
+
+    <!-- Overlay gelap -->
+    <div class="absolute inset-0 bg-black bg-opacity-80"></div>
+
+    <!-- Card Konten -->
+    <div class="relative z-10 bg-gray-900/80 p-8 rounded-xl shadow-lg w-full max-w-3xl">
+
+      <!-- Judul -->
+      <h1 class="text-3xl text-center font-bold text-blue-600 mb-6">Rail Fence Cipher</h1>
+
+      <!-- Form -->
+      <form method="POST" class="space-y-4">
+
+        <textarea name="text" placeholder="Masukkan teks (plaintext/ciphertext)"
+          class="w-full p-3 rounded bg-gray-800 text-white resize-none focus:outline-none focus:ring-2 focus:ring-blue-600"
+          rows="4">{{ request.form.get('text', '') }}</textarea>
+
+        <input type="text" name="key" placeholder="Masukkan key (angka atau teks)"
+          value="{{ request.form.get('key', '') }}"
+          class="w-full p-3 rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-600" />
+
+        {% if key_input %}
+        <p class="text-gray-400 text-sm">
+          <span class="font-semibold text-gray-200">Key input:</span>
+          <span class="text-green-400 font-semibold">{{ key_input }}</span>
+          → digunakan sebagai <span class="text-yellow-400 font-semibold">{{ key_used }}</span> rail
+        </p>
+        {% endif %}
+
+        <select name="mode"
+          class="w-full p-3 rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-600">
+          <option value="encrypt" {% if request.form.get('mode')=='encrypt' %}selected{% endif %}>Enkripsi</option>
+          <option value="decrypt" {% if request.form.get('mode')=='decrypt' %}selected{% endif %}>Dekripsi</option>
+        </select>
+
+        <button type="submit" class="w-full bg-blue-600 py-2 rounded-lg hover:bg-blue-700 transition">Proses</button>
+      </form>
+
+      <!-- Hasil -->
+      {% if result %}
+      <div class="mt-6 bg-gray-800 p-4 rounded">
+        <p class="font-semibold text-lg mb-1 text-blue-400">Hasil:</p>
+        <p id="cipherResult" class="text-lg tracking-wider text-gray-100 break-all">{{ result }}</p>
+        <button onclick="copyResult()" class="bg-gray-600 hover:bg-gray-500 px-3 py-1 rounded mt-2">
+          Copy
+        </button>
+      </div>
+      {% endif %}
+
+      <!-- Visualisasi Grid -->
+      {% if grid %}
+      <div class="mt-6 bg-gray-800 p-4 rounded">
+        <p class="font-semibold text-lg mb-3 text-blue-400">Visualisasi Rail Fence:</p>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-center border border-gray-700 text-gray-200">
+            {% for row in grid %}
+            <tr>
+              {% for col in row %}
+              <td
+                class="border border-gray-700 w-10 h-10 font-semibold {% if col %}text-green-400{% else %}text-gray-600{% endif %}">
+                {{ col }}
+              </td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </table>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Ringkasan -->
+      {% if result %}
+      <div class="mt-6 bg-gray-800 text-left p-4 rounded">
+        <p class="font-semibold text-lg text-left mb-3 text-blue-400">Ringkasan</p>
+
+        <p><span class="font-semibold text-gray-300">Teks Asli:</span>
+          <span class="text-white">{{ request.form.get('text', '') }}</span>
+        </p>
+
+        <p><span class="font-semibold text-gray-300">Key:</span>
+          <span class="text-white">{{ request.form.get('key', '') }}</span>
+        </p>
+
+        <p><span class="font-semibold text-gray-300">Hasil Rail Fence:</span>
+          <span class="text-blue-400 font-bold text-lg">{{ result }}</span>
+        </p>
+      </div>
+      {% endif %}
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-black text-gray-500 text-center py-6 border-t border-gray-800">
+    © 2025 Endes Kriptografi | Dibuat oleh Kelompok 1 Kriptografi
+  </footer>
+
+</body>
+
+</html>
